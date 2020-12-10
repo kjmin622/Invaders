@@ -2,11 +2,16 @@ package screen;
 
 import engine.Cooldown;
 import engine.Core;
+import engine.FileManager;
 import engine.Score;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,10 +68,27 @@ public class HighScoreScreen extends Screen {
 		return this.returnCode;
 	}
 
+	protected final void deleteRecord() throws IOException{
+		String jarPaths = FileManager.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		String jarPath = URLDecoder.decode(jarPaths, "UTF-8");
+
+		String scoresPath = new File(jarPath).getParent();
+		scoresPath += File.separator;
+		scoresPath += "scoreDir";
+		File scoresFile = new File(scoresPath);
+		if(!scoresFile.exists()){
+			scoresFile.mkdir();
+		}
+		scoresPath += File.separator;
+		scoresPath += "scores"+gamemode;
+		scoresFile = new File(scoresPath);
+		scoresFile.delete();
+	}
+
 	/**
 	 * Updates the elements on screen and checks for events.
 	 */
-	protected final void update() {
+	protected final void update(){
 		super.update();
 		draw();
 
@@ -74,10 +96,14 @@ public class HighScoreScreen extends Screen {
 			this.isRunning = false;
 		// 점수 기록 관리 - R버튼 누를시 reset
 		if(inputManager.isKeyDown(KeyEvent.VK_R) && this.resetDelay.checkFinished()){
-			File file = new File("out/production/scores");
-			this.highScores = null;
-			drawManager.drawHighScores(this, highScores);
-			file.delete();
+			try{
+				deleteRecord();
+				highScores = new ArrayList<Score>();
+			}
+			catch(Exception e){
+				logger.warning("Couldn't delete record!");
+			}
+
 		}
 		if((inputManager.isKeyDown(KeyEvent.VK_UP) || inputManager.isKeyDown(KeyEvent.VK_DOWN) || inputManager.isKeyDown(KeyEvent.VK_W) || inputManager.isKeyDown(KeyEvent.VK_S)) && this.selectionCooldown.checkFinished()){
 			if(select == 0) select = 1;

@@ -80,10 +80,12 @@ public class Ship extends Entity {
 	 * Updates status of the ship.
 	 */
 	public final void update() {
-		if (!this.destructionCooldown.checkFinished())
+		if (!this.destructionCooldown.checkFinished()) {
 			this.spriteType = SpriteType.ShipDestroyed;
-		else
+		}
+		else {
 			this.spriteType = SpriteType.Ship;
+		}
 	}
 
 	/**

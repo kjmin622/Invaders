@@ -1,9 +1,9 @@
 package screen;
 
-import java.awt.event.KeyEvent;
-
 import engine.Cooldown;
 import engine.Core;
+
+import java.awt.event.KeyEvent;
 
 /**
  * Implements the title screen.
@@ -68,8 +68,9 @@ public class TitleScreen extends Screen {
 				nextMenuItem();
 				this.selectionCooldown.reset();
 			}
-			if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+			if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
 				this.isRunning = false;
+			}
 		}
 	}
 
@@ -77,24 +78,30 @@ public class TitleScreen extends Screen {
 	 * Shifts the focus to the next menu item.
 	 */
 	private void nextMenuItem() {
-		if (this.returnCode == 4)
+		if (this.returnCode == 4) {
 			this.returnCode = 0;
-		else if (this.returnCode == 0)
+		}
+		else if (this.returnCode == 0) {
 			this.returnCode = 2;
-		else
+		}
+		else {
 			this.returnCode++;
+		}
 	}
 
 	/**
 	 * Shifts the focus to the previous menu item.
 	 */
 	private void previousMenuItem() {
-		if (this.returnCode == 0)
+		if (this.returnCode == 0) {
 			this.returnCode = 4;
-		else if (this.returnCode == 2)
+		}
+		else if (this.returnCode == 2) {
 			this.returnCode = 0;
-		else
+		}
+		else {
 			this.returnCode--;
+		}
 	}
 
 	/**

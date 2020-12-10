@@ -160,8 +160,9 @@ public class GameScreen extends Screen {
 		this.lives = gameState.getLivesRemaining(); // 1인용 기본 생명
 
 
-		if (this.bonusLife)
+		if (this.bonusLife) {
 			this.lives++;
+		}
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 
@@ -254,9 +255,11 @@ public class GameScreen extends Screen {
 						if (moveLeft && !isLeftBorder) {
 							this.ship.moveLeft();
 						}
-						if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-							if (this.ship.shoot(this.bullets))
+						if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+							if (this.ship.shoot(this.bullets)) {
 								this.bulletsShot++;
+							}
+						}
 					}
 
 				}
@@ -279,9 +282,11 @@ public class GameScreen extends Screen {
 						if (moveLeft && !isLeftBorder) {
 							this.ship.moveLeft();
 						}
-						if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-							if (this.ship.shoot(this.bullets))
+						if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+							if (this.ship.shoot(this.bullets)) {
 								this.bulletsShot++;
+							}
+						}
 					}
 
 					if (!this.ship2.isDestroyed()) {
@@ -300,18 +305,22 @@ public class GameScreen extends Screen {
 						if (moveLeft && !isLeftBorder) {
 							this.ship2.moveLeft();
 						}
-						if (inputManager.isKeyDown(KeyEvent.VK_W))
-							if (this.ship2.shoot(this.bullets))
+						if (inputManager.isKeyDown(KeyEvent.VK_W)) {
+							if (this.ship2.shoot(this.bullets)) {
 								this.bulletsShot++;
+							}
+						}
 					}
 				}
 
 
 				if (this.enemyShipSpecial != null) {
-					if (!this.enemyShipSpecial.isDestroyed())
+					if (!this.enemyShipSpecial.isDestroyed()) {
 						this.enemyShipSpecial.move(2, 0);
-					else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
+					}
+					else if (this.enemyShipSpecialExplosionCooldown.checkFinished()) {
 						this.enemyShipSpecial = null;
+					}
 
 				}
 				if (this.enemyShipSpecial == null
@@ -349,8 +358,9 @@ public class GameScreen extends Screen {
 				this.screenFinishedCooldown.reset();
 			}
 
-			if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
+			if (this.levelFinished && this.screenFinishedCooldown.checkFinished()) {
 				this.isRunning = false;
+			}
 		}
 	}
 

@@ -2,12 +2,8 @@ package screen;
 
 import engine.Cooldown;
 import engine.Core;
-import engine.Score;
 
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -120,8 +116,9 @@ public class SettingScreen extends Screen {
     }
 
     private void changeItem() {
-        if (this.select == 0)
+        if (this.select == 0) {
             this.select = 1;
+        }
         else{
             this.select = 0;
         }

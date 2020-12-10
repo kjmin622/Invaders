@@ -280,7 +280,23 @@ public final class DrawManager {
 	 * @param lives
 	 *            Current lives.
 	 */
-	public void drawLives(final Screen screen, final int lives, final int lives2,final int gamemode) {
+	public void drawLives(final Screen screen, final int lives, Color color, final int gamemode) {
+		backBufferGraphics.setFont(fontRegular);
+
+		backBufferGraphics.setColor(Color.WHITE);
+		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
+
+		Ship dummyShip = new Ship(0, 0, new Color((int)(color.getRed()*0.7),(int)(color.getGreen()*0.7),(int)(color.getBlue()*0.7)));
+		int insert = 40;
+		if(gamemode == 1){
+			insert += 15;
+		}
+		int i = 0;
+		for (; i < lives; i++) {
+			drawEntity(dummyShip, insert + 35 * i, 10);
+		}
+	}
+	public void drawLives(final Screen screen, final int lives, final int lives2, Color color1, Color color2, final int gamemode) {
 		backBufferGraphics.setFont(fontRegular);
 		if(gamemode == 0){
 			backBufferGraphics.setColor(Color.WHITE);
@@ -291,8 +307,8 @@ public final class DrawManager {
 			backBufferGraphics.drawString(Integer.toString(lives)+"/"+Integer.toString(lives2), 20, 25);
 		}
 
-		Ship dummyShip = new Ship(0, 0, Color.GRAY);
-		Ship dummyShip2 = new Ship(0, 0, Color.ORANGE);
+		Ship dummyShip = new Ship(0, 0, new Color((int)(color1.getRed()*0.7),(int)(color1.getGreen()*0.7),(int)(color1.getBlue()*0.7)));
+		Ship dummyShip2 = new Ship(0, 0,new Color((int)(color2.getRed()*0.7),(int)(color2.getGreen()*0.7),(int)(color2.getBlue()*0.7)));
 		int insert = 40;
 		if(gamemode == 1){
 			insert += 15;
@@ -809,24 +825,41 @@ public final class DrawManager {
 		drawCenteredRegularString(screen, instructionsString,
 				screen.getHeight() / 5);
 	}
-	public void drawSettingMenu(final Screen screen, int select,int difficult, int playermode){
+	public void drawSettingMenu(final Screen screen, int select,int difficult, int playermode, int coloridx){
 		String[] difficulty = {"easy","normal","hard","extra hard"};
 		String[] players = {"single player","two players"};
+		Color[] colorSet = {Color.GREEN,Color.YELLOW,
+				new Color(92,209,229),new Color(197,254,221),
+				new Color(253, 254, 228),new Color(253, 219, 249),
+				new Color(208, 219, 249),new Color(255, 251, 209),
+				new Color(230, 230, 230),new Color(255,255,255)};
 		if(select == 0){
 			backBufferGraphics.setColor(Color.GREEN);
 		}
 		else{
 			backBufferGraphics.setColor(Color.WHITE);
 		}
-		drawCenteredBigString(screen, "Difficulty", screen.getHeight() / 7 * 2 + screen.getHeight()/9);
-		drawCenteredRegularString(screen, difficulty[difficult], screen.getHeight() / 7 * 2 + screen.getHeight()/9 + fontRegularMetrics.getHeight()*2);
+		drawCenteredBigString(screen, "Difficulty", screen.getHeight() / 7 * 2 + screen.getHeight()/9 - fontRegularMetrics.getHeight()*1);
+		drawCenteredRegularString(screen, difficulty[difficult], screen.getHeight() / 7 * 2 + screen.getHeight()/9 + fontRegularMetrics.getHeight()*1);
 		if(select == 1){
 			backBufferGraphics.setColor(Color.GREEN);
 		}
 		else{
 			backBufferGraphics.setColor(Color.WHITE);
 		}
-		drawCenteredBigString(screen, "PlayerMode", screen.getHeight() / 7 * 2 + screen.getHeight()/9+ fontRegularMetrics.getHeight() * 6);
-		drawCenteredRegularString(screen, players[playermode], screen.getHeight() / 7 * 2 + screen.getHeight()/9+ fontRegularMetrics.getHeight() * 8);
+		drawCenteredBigString(screen, "PlayerMode", screen.getHeight() / 7 * 2 + screen.getHeight()/9 + fontRegularMetrics.getHeight() * 4);
+		drawCenteredRegularString(screen, players[playermode], screen.getHeight() / 7 * 2 + screen.getHeight()/9+ fontRegularMetrics.getHeight() * 6);
+		if(select == 2){
+			backBufferGraphics.setColor(Color.GREEN);
+		}
+		else{
+			backBufferGraphics.setColor(Color.WHITE);
+		}
+		drawCenteredBigString(screen, "shipsColor", screen.getHeight() / 7 * 2 + screen.getHeight()/9+ fontRegularMetrics.getHeight() * 9);
+		Ship dummyShip1 = new Ship(0, 0, new Color((int)(colorSet[coloridx*2].getRed()*0.7),(int)(colorSet[coloridx*2].getGreen()*0.7),(int)(colorSet[coloridx*2].getBlue()*0.7)));
+		Ship dummyShip2 = new Ship(0, 0, new Color((int)(colorSet[coloridx*2+1].getRed()*0.7),(int)(colorSet[coloridx*2+1].getGreen()*0.7),(int)(colorSet[coloridx*2+1].getBlue()*0.7)));
+
+		drawEntity(dummyShip1, (int)(screen.getWidth()*0.45)-13, screen.getHeight() / 7 * 2 + screen.getHeight()/9+ fontRegularMetrics.getHeight() * 11);
+		drawEntity(dummyShip2, (int)(screen.getWidth()*0.55)-13, screen.getHeight() / 7 * 2 + screen.getHeight()/9+ fontRegularMetrics.getHeight() * 11);
 	}
 }

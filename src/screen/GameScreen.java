@@ -123,6 +123,7 @@ public class GameScreen extends Screen {
 	private boolean bonusLife2;
 
 	private int gamemode;
+	private Color color, color2;
 
 
 	/**
@@ -151,7 +152,7 @@ public class GameScreen extends Screen {
 	 *            Frames per second, frame rate at which the game is run.
 >>>>>>> develop
 	 */
-	public GameScreen(GameState gameState, final GameSettings gameSettings, final boolean bonusLife, final int width, final int height, final int fps, final int gamemode) {
+	public GameScreen(GameState gameState, final GameSettings gameSettings, final boolean bonusLife, final int width, final int height, final int fps, final int gamemode, final Color color) {
 		super(width, height, fps);
 		this.gameSettings = gameSettings;
 		this.bonusLife = bonusLife;
@@ -159,13 +160,14 @@ public class GameScreen extends Screen {
 		this.score = gameState.getScore();
 		this.gamemode = gamemode;
 		this.lives = gameState.getLivesRemaining();
+		this.color = color;
 		if (this.bonusLife) {
 			this.lives++;
 		}
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 	}
-	public GameScreen(GameState gameState1, final boolean bonusLife1,GameState gameState2, final boolean bonusLife2, final GameSettings gameSettings, final int width, final int height, final int fps, final int gamemode) {
+	public GameScreen(GameState gameState1, final boolean bonusLife1,GameState gameState2, final boolean bonusLife2, final GameSettings gameSettings, final int width, final int height, final int fps, final int gamemode, final Color color, final Color color2) {
 		super(width, height, fps);
 		this.gameSettings = gameSettings;
 		this.bonusLife = bonusLife1;
@@ -175,6 +177,8 @@ public class GameScreen extends Screen {
 		this.score2 = gameState2.getScore();
 		this.gamemode = gamemode;
 		this.lives = gameState1.getLivesRemaining();
+		this.color = color;
+		this.color2 = color2;
 		if (this.bonusLife) {
 			this.lives++;
 		}
@@ -198,12 +202,12 @@ public class GameScreen extends Screen {
 		enemyShipFormation.attach(this);
 
 		if(gamemode == 0){ // 1인용 게임일 경우
-			this.ship = new Ship(this.width / 2, this.height - 30, Color.GREEN);
+			this.ship = new Ship(this.width / 2, this.height - 30, color);
 		}
 		
 		else if(gamemode == 1){ // 2인용 게임일 경우
-			this.ship = new Ship(this.width / 2 - 15, this.height - 30, Color.GREEN);
-			this.ship2 = new Ship(this.width / 2 + 15, this.height - 30, Color.YELLOW);
+			this.ship = new Ship(this.width / 2 - 15, this.height - 30, color);
+			this.ship2 = new Ship(this.width / 2 + 15, this.height - 30, color2);
 		}
 
 		// Appears each 10-30 seconds.
@@ -278,7 +282,7 @@ public class GameScreen extends Screen {
 						if (moveLeft && !isLeftBorder) {
 							this.ship.moveLeft();
 						}
-						if (inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isKeyDown(KeyEvent.VK_W)) {
+						if (inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isKeyDown(KeyEvent.VK_W) || inputManager.isKeyDown(KeyEvent.VK_UP)) {
 							if (this.ship.shoot(this.bullets)) {
 								this.bulletsShot++;
 							}
@@ -300,7 +304,7 @@ public class GameScreen extends Screen {
 						if (moveLeft && !isLeftBorder) {
 							this.ship.moveLeft();
 						}
-						if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+						if (inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isKeyDown(KeyEvent.VK_UP)) {
 							if (this.ship.shoot(this.bullets)) {
 								this.bulletsShot++;
 							}
@@ -422,11 +426,11 @@ public class GameScreen extends Screen {
 		// Interface.
 		if(gamemode==0){
 			drawManager.drawScore(this, this.score);
-			drawManager.drawLives(this, this.lives,0, gamemode);
+			drawManager.drawLives(this, this.lives, ship.getColor(), gamemode);
 		}
 		if(gamemode == 1){
 			drawManager.drawScore(this, this.score, this.score2);
-			drawManager.drawLives(this, this.lives, this.lives2,gamemode);
+			drawManager.drawLives(this, this.lives, this.lives2,ship.getColor(),ship2.getColor(),gamemode);
 		}
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 

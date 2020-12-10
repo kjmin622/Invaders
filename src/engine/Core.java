@@ -199,6 +199,11 @@ public final class Core {
 							gameState2 = ((GameScreen) currentScreen).getGameState2();
 
 						}while ((gameState.getLivesRemaining() > 0 || gameState2.getLivesRemaining()>0) && gameState.getLevel() <= NUM_LEVELS);
+						LOGGER.info("Player1 : Starting " + WIDTH + "x" + HEIGHT + " score screen at " + FPS + " fps, with a score of " + gameState.getScore() + ", " + gameState.getLivesRemaining() + " lives remaining, " + gameState.getBulletsShot() + " bullets shot and " + gameState.getShipsDestroyed() + " ships destroyed.");
+						LOGGER.info("Player2 : Starting " + WIDTH + "x" + HEIGHT + " score screen at " + FPS + " fps, with a score of " + gameState2.getScore() + ", " + gameState2.getLivesRemaining() + " lives remaining, " + gameState2.getBulletsShot() + " bullets shot and " + gameState2.getShipsDestroyed() + " ships destroyed.");
+						currentScreen = new MultiScoreScreen(width, height, FPS, gameState, gameState2, PLAYERMODE, DIFFICULTY);
+						returnCode = frame.setScreen(currentScreen);
+						LOGGER.info("Closing score screen.");
 					}
 					break;
 				case 3:

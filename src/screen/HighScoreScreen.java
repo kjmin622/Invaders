@@ -7,9 +7,7 @@ import engine.Score;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +42,7 @@ public class HighScoreScreen extends Screen {
 		super(width, height, fps);
 
 		this.returnCode = 1;
-		this.gamemode = (playermode*4) + difficulty;
+		this.gamemode = playermode*4 + difficulty;
 		this.playermode = playermode;
 		this.difficulty = difficulty;
 		this.select = 0;
@@ -69,8 +67,10 @@ public class HighScoreScreen extends Screen {
 	}
 
 	protected final void deleteRecord() throws IOException{
-		String jarPaths = FileManager.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		String jarPath = URLDecoder.decode(jarPaths, "UTF-8");
+		String jarPaths;
+		jarPaths = FileManager.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		String jarPath;
+		jarPath = URLDecoder.decode(jarPaths, "UTF-8");
 
 		String scoresPath = new File(jarPath).getParent();
 		scoresPath += File.separator;
@@ -92,13 +92,14 @@ public class HighScoreScreen extends Screen {
 		super.update();
 		draw();
 
-		if ((inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) && this.selectionCooldown.checkFinished())
+		if ((inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) && this.selectionCooldown.checkFinished()) {
 			this.isRunning = false;
+		}
 		// 점수 기록 관리 - R버튼 누를시 reset
 		if(inputManager.isKeyDown(KeyEvent.VK_R) && this.resetDelay.checkFinished()){
 			try{
 				deleteRecord();
-				highScores = new ArrayList<Score>();
+				highScores = new ArrayList<>();
 			}
 			catch(Exception e){
 				logger.warning("Couldn't delete record!");
@@ -106,20 +107,32 @@ public class HighScoreScreen extends Screen {
 
 		}
 		if((inputManager.isKeyDown(KeyEvent.VK_UP) || inputManager.isKeyDown(KeyEvent.VK_DOWN) || inputManager.isKeyDown(KeyEvent.VK_W) || inputManager.isKeyDown(KeyEvent.VK_S)) && this.selectionCooldown.checkFinished()){
-			if(select == 0) select = 1;
-			else if(select == 1) select = 0;
+			if(select == 0) {
+				select = 1;
+			}
+			else if(select == 1) {
+				select = 0;
+			}
 			this.selectionCooldown.reset();
 		}
 		if((inputManager.isKeyDown(KeyEvent.VK_RIGHT) || inputManager.isKeyDown(KeyEvent.VK_D))&& this.selectionCooldown.checkFinished()){
 			if(select == 0){
-				if(playermode == 0) playermode = 1;
-				else if(playermode == 1) playermode = 0;
+				if(playermode == 0) {
+					playermode = 1;
+				}
+				else if(playermode == 1){
+					playermode = 0;
+				}
 			}
 			if(select == 1){
-				if(difficulty == 3) difficulty = 0;
-				else difficulty++;
+				if(difficulty == 3) {
+					difficulty = 0;
+				}
+				else {
+					difficulty++;
+				}
 			}
-			this.gamemode = (playermode*4) + difficulty;
+			this.gamemode = playermode*4 + difficulty;
 			try {
 				this.highScores = Core.getFileManager().loadHighScores(gamemode);
 			} catch (NumberFormatException | IOException e) {
@@ -129,14 +142,22 @@ public class HighScoreScreen extends Screen {
 		}
 		if((inputManager.isKeyDown(KeyEvent.VK_LEFT) || inputManager.isKeyDown(KeyEvent.VK_A))&& this.selectionCooldown.checkFinished()){
 			if(select == 0){
-				if(playermode == 0) playermode = 1;
-				else if(playermode == 1) playermode = 0;
+				if(playermode == 0){
+					playermode = 1;
+				}
+				else if(playermode == 1){
+					playermode = 0;
+				}
 			}
 			if(select == 1){
-				if(difficulty == 0) difficulty = 3;
-				else difficulty--;
+				if(difficulty == 0) {
+					difficulty = 3;
+				}
+				else {
+					difficulty--;
+				}
 			}
-			this.gamemode = (playermode*4) + difficulty;
+			this.gamemode = playermode*4 + difficulty;
 			try {
 				this.highScores = Core.getFileManager().loadHighScores(gamemode);
 			} catch (NumberFormatException | IOException e) {

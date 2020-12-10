@@ -48,7 +48,7 @@ public final class DrawManager {
 	private static Map<SpriteType, boolean[][]> spriteMap2;
 
 	/** Sprite types. */
-	public static enum SpriteType {
+	public enum SpriteType {
 		/** Player ship. */
 		Ship,
 
@@ -74,7 +74,7 @@ public final class DrawManager {
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
 		Explosion
-	};
+	}
 
 	/**
 	 * Private constructor.

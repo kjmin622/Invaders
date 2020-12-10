@@ -3,7 +3,9 @@ package engine;
 import screen.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.*;
 
 /**
@@ -21,34 +23,60 @@ public final class Core {
 	/** Max fps of current screen.  // 최대 fps 설정 */
 	private static final int FPS = 60;
 
+	/** DIFFICULT */
+	private static int DIFFICULTY = 0; // 0: easy  1: normal  2: hard 3: extra hard
+	/** PLAYERMODE */
+	private static int PLAYERMODE = 0; // 0:single 1:double
+
 	/** Max lives. //최대 생명 개수 */
-	private static final int MAX_LIVES = 3;
+	private static final int MAX_LIVES = 3; // (1인용) 기본 생명 개수 설정
 	/** Levels between extra life. 추가로 주어지는 생명 개수 // */
 	private static final int EXTRA_LIFE_FRECUENCY = 3;
 	/** Total number of levels. // 총 레벨 7까지 */
 	private static final int NUM_LEVELS = 7;
 
 	/** Difficulty settings for level 1.  // 레벨 1에 대한 난이도 설정 */
-	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(5, 4, 60, 2000);
+	private static final GameSettings[] SETTINGS_LEVEL_1 =
+			{new GameSettings(5, 4, 60, 3000),
+					new GameSettings(5, 4, 60, 2500),
+					new GameSettings(5, 4, 60, 1500),
+					new GameSettings(5, 4, 80,80)};
 	/** Difficulty settings for level 2. // 레벨 2에 대한 난이도 설정 */
-	private static final GameSettings SETTINGS_LEVEL_2 =
-			new GameSettings(5, 5, 50, 2500);
+	private static final GameSettings[] SETTINGS_LEVEL_2 =
+			{new GameSettings(5, 5, 50, 2500),
+					new GameSettings(5, 5, 50, 2000),
+					new GameSettings(5, 5, 50, 1200),
+					new GameSettings(5, 5, 70, 80)};
 	/** Difficulty settings for level 3. // 레벨 3에 대한 난이도 설정 */
-	private static final GameSettings SETTINGS_LEVEL_3 =
-			new GameSettings(6, 5, 40, 1500);
+	private static final GameSettings[] SETTINGS_LEVEL_3 =
+			{new GameSettings(6, 5, 40, 1500),
+					new GameSettings(6, 5, 40, 1000),
+					new GameSettings(6, 5, 40, 900),
+					new GameSettings(6, 5, 60, 80)};
 	/** Difficulty settings for level 4. // 레벨 4에 대한 난이도 설정 */
-	private static final GameSettings SETTINGS_LEVEL_4 =
-			new GameSettings(6, 6, 30, 1500);
+	private static final GameSettings[] SETTINGS_LEVEL_4 =
+			{new GameSettings(6, 6, 30, 1500),
+					new GameSettings(6, 6, 30, 1000),
+					new GameSettings(6, 6, 30, 700),
+					new GameSettings(6, 6, 50, 80)};
 	/** Difficulty settings for level 5. // 레벨 5에 대한 난이도 설정 */
-	private static final GameSettings SETTINGS_LEVEL_5 =
-			new GameSettings(7, 6, 20, 1000);
+	private static final GameSettings[] SETTINGS_LEVEL_5 =
+			{new GameSettings(7, 6, 20, 1000),
+					new GameSettings(7, 6, 20, 700),
+					new GameSettings(7, 6, 20, 500),
+					new GameSettings(7, 6, 40, 80)};
 	/** Difficulty settings for level 6. // 레벨 6에 대한 난이도 설정 */
-	private static final GameSettings SETTINGS_LEVEL_6 =
-			new GameSettings(7, 7, 10, 1000);
+	private static final GameSettings[] SETTINGS_LEVEL_6 =
+			{new GameSettings(7, 7, 10, 1000),
+					new GameSettings(7, 7, 10, 500),
+					new GameSettings(7, 7, 10, 300),
+					new GameSettings(7, 7, 30, 80)};
 	/** Difficulty settings for level 7. // 레벨 7에 대한 난이도 설정 */
-	private static final GameSettings SETTINGS_LEVEL_7 =
-			new GameSettings(8, 7, 2, 500);
+	private static final GameSettings[] SETTINGS_LEVEL_7 =
+			{new GameSettings(8, 7, 2, 500),
+					new GameSettings(8, 7, 2, 400),
+					new GameSettings(8, 7, 2, 300),
+					new GameSettings(8, 7, 20, 80)};
 
 	/** Frame to draw the screen on. // 화면을 그려주는 프레임 */
 	private static Frame frame;
@@ -96,19 +124,23 @@ public final class Core {
 		int height = frame.getHeight();
 
 		gameSettings = new ArrayList<GameSettings>();
-		gameSettings.add(SETTINGS_LEVEL_1);
-		gameSettings.add(SETTINGS_LEVEL_2);
-		gameSettings.add(SETTINGS_LEVEL_3);
-		gameSettings.add(SETTINGS_LEVEL_4);
-		gameSettings.add(SETTINGS_LEVEL_5);
-		gameSettings.add(SETTINGS_LEVEL_6);
-		gameSettings.add(SETTINGS_LEVEL_7);
+		gameSettings.add(SETTINGS_LEVEL_1[DIFFICULTY]);
+		gameSettings.add(SETTINGS_LEVEL_2[DIFFICULTY]);
+		gameSettings.add(SETTINGS_LEVEL_3[DIFFICULTY]);
+		gameSettings.add(SETTINGS_LEVEL_4[DIFFICULTY]);
+		gameSettings.add(SETTINGS_LEVEL_5[DIFFICULTY]);
+		gameSettings.add(SETTINGS_LEVEL_6[DIFFICULTY]);
+		gameSettings.add(SETTINGS_LEVEL_7[DIFFICULTY]);
 
 		GameState gameState;
 
 		int returnCode = 1;
 		do {
+
 			gameState = new GameState(1, 0, MAX_LIVES, 0, 0);
+			if(PLAYERMODE == 1){
+				gameState = new GameState(1, 0, MAX_LIVES*2, 0, 0);
+			}
 
 			switch (returnCode) {
 				case 1:
@@ -129,7 +161,7 @@ public final class Core {
 
 						currentScreen = new GameScreen(gameState,
 								gameSettings.get(gameState.getLevel() - 1),
-								bonusLife, width, height, FPS);
+								bonusLife, width, height, FPS, PLAYERMODE);
 						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 								+ " game screen at " + FPS + " fps.");
 						frame.setScreen(currentScreen);
@@ -164,6 +196,22 @@ public final class Core {
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing high score screen.");
 					break;
+				case 4:
+					Map<String, Integer> setDic = new HashMap<String,Integer>();
+					setDic.put("DIFFICULTY",DIFFICULTY);
+					setDic.put("PLAYERMODE",PLAYERMODE);
+					currentScreen = new SettingScreen(width,height,FPS,setDic);
+					returnCode = frame.setScreen(currentScreen);
+					DIFFICULTY = setDic.get("DIFFICULTY");
+					PLAYERMODE = setDic.get("PLAYERMODE");
+					gameSettings.clear();
+					gameSettings.add(SETTINGS_LEVEL_1[DIFFICULTY]);
+					gameSettings.add(SETTINGS_LEVEL_2[DIFFICULTY]);
+					gameSettings.add(SETTINGS_LEVEL_3[DIFFICULTY]);
+					gameSettings.add(SETTINGS_LEVEL_4[DIFFICULTY]);
+					gameSettings.add(SETTINGS_LEVEL_5[DIFFICULTY]);
+					gameSettings.add(SETTINGS_LEVEL_6[DIFFICULTY]);
+					gameSettings.add(SETTINGS_LEVEL_7[DIFFICULTY]);
 				default:
 					break;
 			}

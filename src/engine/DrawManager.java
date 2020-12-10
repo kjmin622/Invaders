@@ -45,11 +45,13 @@ public final class DrawManager {
 
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, boolean[][]> spriteMap;
+	private static Map<SpriteType, boolean[][]> spriteMap2;
 
 	/** Sprite types. */
 	public static enum SpriteType {
 		/** Player ship. */
 		Ship,
+
 		/** Destroyed player ship. */
 		ShipDestroyed,
 		/** Player bullet. */
@@ -86,6 +88,7 @@ public final class DrawManager {
 			spriteMap = new LinkedHashMap<SpriteType, boolean[][]>();
 
 			spriteMap.put(SpriteType.Ship, new boolean[13][8]);
+
 			spriteMap.put(SpriteType.ShipDestroyed, new boolean[13][8]);
 			spriteMap.put(SpriteType.Bullet, new boolean[3][5]);
 			spriteMap.put(SpriteType.EnemyBullet, new boolean[3][5]);
@@ -98,7 +101,24 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
 
+//			spriteMap2 = new LinkedHashMap<SpriteType, boolean[][]>();
+//
+//			spriteMap2.put(SpriteType.Ship, new boolean[13][8]);
+//
+//			spriteMap2.put(SpriteType.ShipDestroyed, new boolean[13][8]);
+//			spriteMap2.put(SpriteType.Bullet, new boolean[3][5]);
+//			spriteMap2.put(SpriteType.EnemyBullet, new boolean[3][5]);
+//			spriteMap2.put(SpriteType.EnemyShipA1, new boolean[12][8]);
+//			spriteMap2.put(SpriteType.EnemyShipA2, new boolean[12][8]);
+//			spriteMap2.put(SpriteType.EnemyShipB1, new boolean[12][8]);
+//			spriteMap2.put(SpriteType.EnemyShipB2, new boolean[12][8]);
+//			spriteMap2.put(SpriteType.EnemyShipC1, new boolean[12][8]);
+//			spriteMap2.put(SpriteType.EnemyShipC2, new boolean[12][8]);
+//			spriteMap2.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
+//			spriteMap2.put(SpriteType.Explosion, new boolean[13][7]);
+
 			fileManager.loadSprite(spriteMap);
+			// fileManager.loadSprite(spriteMap2);
 			logger.info("Finished loading the sprites.");
 
 			// Font loading.
@@ -251,7 +271,7 @@ public final class DrawManager {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.WHITE);
 		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
-		Ship dummyShip = new Ship(0, 0);
+		Ship dummyShip = new Ship(0, 0, Color.GRAY);
 		for (int i = 0; i < lives; i++)
 			drawEntity(dummyShip, 40 + 35 * i, 10);
 	}
@@ -301,26 +321,31 @@ public final class DrawManager {
 	public void drawMenu(final Screen screen, final int option) {
 		String playString = "Play";
 		String highScoresString = "High scores";
+		String settingString = "Setting";
 		String exitString = "exit";
 
 		if (option == 2)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, playString,
-				screen.getHeight() / 3 * 2);
+		drawCenteredRegularString(screen, playString, screen.getHeight() / 4 * 2 + screen.getHeight()/9);
 		if (option == 3)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, highScoresString, screen.getHeight()
-				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
+		drawCenteredRegularString(screen, highScoresString, screen.getHeight() / 4 * 2 + screen.getHeight()/9 + fontRegularMetrics.getHeight() * 2);
+
+		if (option == 4)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, settingString, screen.getHeight() / 4 * 2 + screen.getHeight()/9 + fontRegularMetrics.getHeight() * 4);
+
 		if (option == 0)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, exitString, screen.getHeight() / 3
-				* 2 + fontRegularMetrics.getHeight() * 4);
+		drawCenteredRegularString(screen, exitString, screen.getHeight() / 4 * 2 + screen.getHeight()/9 + fontRegularMetrics.getHeight() * 6);
 	}
 
 	/**
@@ -565,6 +590,39 @@ public final class DrawManager {
 		backBufferGraphics.setColor(Color.BLACK);
 		backBufferGraphics.fillRect(0, screen.getHeight() / 2 - rectHeight / 2, rectWidth, rectHeight);
 		backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredBigString(screen,"PAUSE",screen.getHeight()/2+fontBigMetrics.getHeight()/3);
+		drawCenteredBigString(screen,"PAUSE",screen.getHeight()/2+fontBigMetrics.getHeight()/5);
+		drawCenteredRegularString(screen,"Esc:continue / Q: exit",screen.getHeight()/2+fontBigMetrics.getHeight()/4*4);
+	}
+
+	public void drawSetting(final Screen screen){
+		String highScoreString = "Setting";
+		String instructionsString = "Space/Esc: Back / ArrowKey: Setting";
+
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, highScoreString, screen.getHeight() / 8);
+
+		backBufferGraphics.setColor(Color.GRAY);
+		drawCenteredRegularString(screen, instructionsString,
+				screen.getHeight() / 5);
+	}
+	public void drawSettingMenu(final Screen screen, int select,int difficult, int playermode){
+		String[] difficulty = {"easy","normal","hard","extra hard"};
+		String[] players = {"single player","two players"};
+		if(select == 0){
+			backBufferGraphics.setColor(Color.GREEN);
+		}
+		else{
+			backBufferGraphics.setColor(Color.WHITE);
+		}
+		drawCenteredBigString(screen, "Difficulty", screen.getHeight() / 7 * 2 + screen.getHeight()/9);
+		drawCenteredRegularString(screen, difficulty[difficult], screen.getHeight() / 7 * 2 + screen.getHeight()/9 + fontRegularMetrics.getHeight()*2);
+		if(select == 1){
+			backBufferGraphics.setColor(Color.GREEN);
+		}
+		else{
+			backBufferGraphics.setColor(Color.WHITE);
+		}
+		drawCenteredBigString(screen, "PlayerMode", screen.getHeight() / 7 * 2 + screen.getHeight()/9+ fontRegularMetrics.getHeight() * 6);
+		drawCenteredRegularString(screen, players[playermode], screen.getHeight() / 7 * 2 + screen.getHeight()/9+ fontRegularMetrics.getHeight() * 8);
 	}
 }

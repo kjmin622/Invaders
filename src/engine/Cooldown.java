@@ -54,9 +54,9 @@ public class Cooldown {
 	 * @return Cooldown state. // 재사용 대기 상태
 	 */
 	public final boolean checkFinished() {
-		if ((this.time == 0)
-				|| this.time + this.duration < System.currentTimeMillis())
+		if ((this.time == 0) || this.time + this.duration < System.currentTimeMillis()) {
 			return true;
+		}
 		return false;
 	}
 
@@ -65,9 +65,9 @@ public class Cooldown {
 	 */
 	public final void reset() {
 		this.time = System.currentTimeMillis();
-		if (this.variance != 0)
-			this.duration = (this.milliseconds - this.variance)
-					+ (int) (Math.random()
-							* (this.milliseconds + this.variance));
+		if (this.variance != 0){
+			this.duration = (this.milliseconds - this.variance) + (int) (Math.random() * (this.milliseconds + this.variance));
+		}
+
 	}
 }

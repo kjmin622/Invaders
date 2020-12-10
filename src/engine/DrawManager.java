@@ -272,14 +272,20 @@ public final class DrawManager {
 	 * @param lives
 	 *            Current lives.
 	 */
-	public void drawLives(final Screen screen, final int lives) {
+	public void drawLives(final Screen screen, final int lives, final int lives2) {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.WHITE);
 		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
 		Ship dummyShip = new Ship(0, 0, Color.GRAY);
-		for (int i = 0; i < lives; i++) {
+		Ship dummyShip2 = new Ship(0, 0, Color.ORANGE);
+		int i = 0;
+		for (; i < lives; i++) {
 			drawEntity(dummyShip, 40 + 35 * i, 10);
 		}
+		for(int j=i;j<i+lives2;j++){
+			drawEntity(dummyShip2, 40 + 35 * j, 10);
+		}
+
 	}
 
 	/**

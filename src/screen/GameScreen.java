@@ -62,12 +62,6 @@ public class GameScreen extends Screen {
 	 */
 	private EnemyShipFormation enemyShipFormation;
 	/**
-	 * Player's ship.
-	 */
-	private Ship ship;
-
-	private Ship ship2; // 2인용인 경우 사용
-	/**
 	 * Bonus enemy ship that appears sometimes.
 	 */
 	private EnemyShip enemyShipSpecial;
@@ -88,21 +82,31 @@ public class GameScreen extends Screen {
 	 */
 	private Set<Bullet> bullets;
 	/**
+	 * Player's ship.
+	 */
+	private Ship ship;
+	private Ship ship2; // 2인용인 경우 사용
+	/**
 	 * Current score.
 	 */
+
 	private int score;
+	private int score2;
 	/**
 	 * Player lives left.
 	 */
 	private int lives;
+	private int lives2;
 	/**
 	 * Total bullets shot by the player.
 	 */
 	private int bulletsShot;
+	private int bulletsShot2;
 	/**
 	 * Total ships destroyed by the player.
 	 */
 	private int shipsDestroyed;
+	private int shipsDestroyed2;
 	/**
 	 * Moment the game starts.
 	 */
@@ -115,6 +119,7 @@ public class GameScreen extends Screen {
 	 * Checks if a bonus life is received.
 	 */
 	private boolean bonusLife;
+	private boolean bonusLife2;
 
 	private int gamemode;
 
@@ -145,28 +150,41 @@ public class GameScreen extends Screen {
 	 *            Frames per second, frame rate at which the game is run.
 >>>>>>> develop
 	 */
-	public GameScreen(GameState gameState,
-					  final GameSettings gameSettings, final boolean bonusLife,
-					  final int width, final int height, final int fps, final int gamemode) {
+	public GameScreen(GameState gameState, final GameSettings gameSettings, final boolean bonusLife, final int width, final int height, final int fps, final int gamemode) {
 		super(width, height, fps);
-
 		this.gameSettings = gameSettings;
 		this.bonusLife = bonusLife;
 		this.level = gameState.getLevel();
 		this.score = gameState.getScore();
 		this.gamemode = gamemode;
-
-
-		this.lives = gameState.getLivesRemaining(); // 1인용 기본 생명
-
-
+		this.lives = gameState.getLivesRemaining();
 		if (this.bonusLife) {
 			this.lives++;
 		}
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
-
-
+	}
+	public GameScreen(GameState gameState1, final boolean bonusLife1,GameState gameState2, final boolean bonusLife2, final GameSettings gameSettings, final int width, final int height, final int fps, final int gamemode) {
+		super(width, height, fps);
+		this.gameSettings = gameSettings;
+		this.bonusLife = bonusLife1;
+		this.bonusLife2 = bonusLife2;
+		this.level = gameState1.getLevel();
+		this.score = gameState1.getScore();
+		this.score2 = gameState2.getScore();
+		this.gamemode = gamemode;
+		this.lives = gameState1.getLivesRemaining();
+		if (this.bonusLife) {
+			this.lives++;
+		}
+		this.lives2 = gameState2.getLivesRemaining();
+		if (this.bonusLife2) {
+			this.lives2++;
+		}
+		this.bulletsShot = gameState1.getBulletsShot();
+		this.bulletsShot2 = gameState2.getBulletsShot();
+		this.shipsDestroyed = gameState1.getShipsDestroyed();
+		this.shipsDestroyed2 = gameState2.getShipsDestroyed();
 	}
 
 	/**
@@ -191,8 +209,7 @@ public class GameScreen extends Screen {
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
 				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
 		this.enemyShipSpecialCooldown.reset();
-		this.enemyShipSpecialExplosionCooldown = Core
-				.getCooldown(BONUS_SHIP_EXPLOSION);
+		this.enemyShipSpecialExplosionCooldown = Core.getCooldown(BONUS_SHIP_EXPLOSION);
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
 
@@ -212,6 +229,10 @@ public class GameScreen extends Screen {
 
 		this.score += LIFE_SCORE * (this.lives - 1);
 		this.logger.info("Screen cleared with a score of " + this.score);
+		if(gamemode==1){
+			this.score2 += LIFE_SCORE * (this.lives2 - 1);
+			this.logger.info("Screen cleared with a score of " + this.score2);
+		}
 
 		return this.returnCode;
 	}
@@ -239,9 +260,9 @@ public class GameScreen extends Screen {
 
 				if(gamemode == 0){ // 1인용 게임인 경우
 					if (!this.ship.isDestroyed()) {
-						boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT);
+						boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT) || inputManager.isKeyDown(KeyEvent.VK_D);
 
-						boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT);
+						boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT) || inputManager.isKeyDown(KeyEvent.VK_A);
 
 
 						boolean isRightBorder = this.ship.getPositionX()
@@ -255,7 +276,7 @@ public class GameScreen extends Screen {
 						if (moveLeft && !isLeftBorder) {
 							this.ship.moveLeft();
 						}
-						if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+						if (inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isKeyDown(KeyEvent.VK_W)) {
 							if (this.ship.shoot(this.bullets)) {
 								this.bulletsShot++;
 							}
@@ -265,16 +286,11 @@ public class GameScreen extends Screen {
 				}
 
 				else if(gamemode == 1){ // 2인용 게임인 경우
-					if (!this.ship.isDestroyed()) {
+					if (!this.ship.isDestroyed() && this.lives > 0) {
 						boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT);
-
 						boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT);
-
-
-						boolean isRightBorder = this.ship.getPositionX()
-								+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
-						boolean isLeftBorder = this.ship.getPositionX()
-								- this.ship.getSpeed() < 1;
+						boolean isRightBorder = this.ship.getPositionX() + this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
+						boolean isLeftBorder = this.ship.getPositionX() - this.ship.getSpeed() < 1;
 
 						if (moveRight && !isRightBorder) {
 							this.ship.moveRight();
@@ -289,16 +305,11 @@ public class GameScreen extends Screen {
 						}
 					}
 
-					if (!this.ship2.isDestroyed()) {
+					if (!this.ship2.isDestroyed() && this.lives2 > 0) {
 						boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_D);
-
 						boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_A);
-
-						boolean isRightBorder = this.ship2.getPositionX()
-								+ this.ship2.getWidth() + this.ship2.getSpeed() > this.width - 1;
-						boolean isLeftBorder = this.ship2.getPositionX()
-								- this.ship2.getSpeed() < 1;
-
+						boolean isRightBorder = this.ship2.getPositionX() + this.ship2.getWidth() + this.ship2.getSpeed() > this.width - 1;
+						boolean isLeftBorder = this.ship2.getPositionX() - this.ship2.getSpeed() < 1;
 						if (moveRight && !isRightBorder) {
 							this.ship2.moveRight();
 						}
@@ -348,12 +359,15 @@ public class GameScreen extends Screen {
 			cleanBullets();
 		}
 		draw();
+		if(this.lives <= 0){
+			this.lives = 0;
+		}
+		if(gamemode==1 && this.lives2 <= 0){
+			this.lives2 = 0;
+		}
 		if(!pause){
-			if ((this.enemyShipFormation.isEmpty() || this.lives <= 0)
-					&& !this.levelFinished) {
-				if(this.lives <= 0){
-					this.lives = 0;
-				}
+			if ((this.enemyShipFormation.isEmpty() || (this.lives <= 0 && this.lives2 <= 0)) && !this.levelFinished) {
+
 				this.levelFinished = true;
 				this.screenFinishedCooldown.reset();
 			}
@@ -376,10 +390,13 @@ public class GameScreen extends Screen {
 		}
 
 		else if(gamemode == 1){ // 2인용 게임인 경우
-			drawManager.drawEntity(this.ship, this.ship.getPositionX(),
-					this.ship.getPositionY());
-			drawManager.drawEntity(this.ship2, this.ship2.getPositionX(),
-					this.ship2.getPositionY()); /////////////////////////////////////////////
+			if(lives>0 || this.ship.isDestroyed()){
+				drawManager.drawEntity(this.ship, this.ship.getPositionX(), this.ship.getPositionY());
+			}
+			if(lives2>0 || this.ship.isDestroyed()){
+				drawManager.drawEntity(this.ship2, this.ship2.getPositionX(), this.ship2.getPositionY());
+			}
+
 		}
 
 
@@ -398,7 +415,10 @@ public class GameScreen extends Screen {
 
 		// Interface.
 		drawManager.drawScore(this, this.score);
-		drawManager.drawLives(this, this.lives);
+		drawManager.drawLives(this, this.lives,0);
+		if(gamemode == 1){
+			drawManager.drawLives(this, this.lives, this.lives2);
+		}
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 
 		// Countdown to game start.
@@ -462,7 +482,7 @@ public class GameScreen extends Screen {
 				if(gamemode == 1){ // 2인용 게임인 경우
 					if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 						recyclable.add(bullet);
-						if (!this.ship.isDestroyed()) {
+						if (!this.ship.isDestroyed() && this.lives > 0) {
 							this.ship.destroy();
 							this.lives--;
 							this.logger.info("Hit on player ship, " + this.lives
@@ -472,9 +492,9 @@ public class GameScreen extends Screen {
 
 					if (checkCollision(bullet, this.ship2) && !this.levelFinished) {
 						recyclable.add(bullet);
-						if (!this.ship2.isDestroyed()) {
+						if (!this.ship2.isDestroyed() && this.lives2 > 0) {
 							this.ship2.destroy();
-							this.lives--;
+							this.lives2--;
 							this.logger.info("Hit on player ship2, " + this.lives
 									+ " lives remaining.");
 						}
@@ -486,17 +506,14 @@ public class GameScreen extends Screen {
 
 			else {
 				for (EnemyShip enemyShip : this.enemyShipFormation) {
-					if (!enemyShip.isDestroyed()
-							&& checkCollision(bullet, enemyShip)) {
+					if (!enemyShip.isDestroyed() && checkCollision(bullet, enemyShip)) {
 						this.score += enemyShip.getPointValue();
 						this.shipsDestroyed++;
 						this.enemyShipFormation.destroy(enemyShip);
 						recyclable.add(bullet);
 					}
 				}
-				if (this.enemyShipSpecial != null
-						&& !this.enemyShipSpecial.isDestroyed()
-						&& checkCollision(bullet, this.enemyShipSpecial)) {
+				if (this.enemyShipSpecial != null && !this.enemyShipSpecial.isDestroyed() && checkCollision(bullet, this.enemyShipSpecial)) {
 					this.score += this.enemyShipSpecial.getPointValue();
 					this.shipsDestroyed++;
 					this.enemyShipSpecial.destroy();
@@ -537,7 +554,9 @@ public class GameScreen extends Screen {
 	 * @return Current game state.
 	 */
 	public final GameState getGameState() {
-		return new GameState(this.level, this.score, this.lives,
-				this.bulletsShot, this.shipsDestroyed);
+		return new GameState(this.level, this.score, this.lives, this.bulletsShot, this.shipsDestroyed);
+	}
+	public final GameState getGameState2(){
+		return new GameState(this.level, this.score2, this.lives2, this.bulletsShot2, this.shipsDestroyed2);
 	}
 }

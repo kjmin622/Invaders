@@ -1,81 +1,73 @@
 package engine;
 
+import screen.*;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import screen.GameScreen;
-import screen.HighScoreScreen;
-import screen.ScoreScreen;
-import screen.Screen;
-import screen.TitleScreen;
+import java.util.logging.*;
 
 /**
- * Implements core game logic.
- * 
+ * Implements core game logic. // 핵심 게임 논리 구현
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+
  */
 public final class Core {
 
-	/** Width of current screen. */
+	/** Width of current screen. // 현재 스크린 폭 */
 	private static final int WIDTH = 448;
-	/** Height of current screen. */
+	/** Height of current screen. // 현재 스크린 높이 */
 	private static final int HEIGHT = 520;
-	/** Max fps of current screen. */
+	/** Max fps of current screen.  // 최대 fps 설정 */
 	private static final int FPS = 60;
 
-	/** Max lives. */
+	/** Max lives. //최대 생명 개수 */
 	private static final int MAX_LIVES = 3;
-	/** Levels between extra life. */
+	/** Levels between extra life. 추가로 주어지는 생명 개수 // */
 	private static final int EXTRA_LIFE_FRECUENCY = 3;
-	/** Total number of levels. */
+	/** Total number of levels. // 총 레벨 7까지 */
 	private static final int NUM_LEVELS = 7;
-	
-	/** Difficulty settings for level 1. */
+
+	/** Difficulty settings for level 1.  // 레벨 1에 대한 난이도 설정 */
 	private static final GameSettings SETTINGS_LEVEL_1 =
 			new GameSettings(5, 4, 60, 2000);
-	/** Difficulty settings for level 2. */
+	/** Difficulty settings for level 2. // 레벨 2에 대한 난이도 설정 */
 	private static final GameSettings SETTINGS_LEVEL_2 =
 			new GameSettings(5, 5, 50, 2500);
-	/** Difficulty settings for level 3. */
+	/** Difficulty settings for level 3. // 레벨 3에 대한 난이도 설정 */
 	private static final GameSettings SETTINGS_LEVEL_3 =
 			new GameSettings(6, 5, 40, 1500);
-	/** Difficulty settings for level 4. */
+	/** Difficulty settings for level 4. // 레벨 4에 대한 난이도 설정 */
 	private static final GameSettings SETTINGS_LEVEL_4 =
 			new GameSettings(6, 6, 30, 1500);
-	/** Difficulty settings for level 5. */
+	/** Difficulty settings for level 5. // 레벨 5에 대한 난이도 설정 */
 	private static final GameSettings SETTINGS_LEVEL_5 =
 			new GameSettings(7, 6, 20, 1000);
-	/** Difficulty settings for level 6. */
+	/** Difficulty settings for level 6. // 레벨 6에 대한 난이도 설정 */
 	private static final GameSettings SETTINGS_LEVEL_6 =
 			new GameSettings(7, 7, 10, 1000);
-	/** Difficulty settings for level 7. */
+	/** Difficulty settings for level 7. // 레벨 7에 대한 난이도 설정 */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
-	
-	/** Frame to draw the screen on. */
+
+	/** Frame to draw the screen on. // 화면을 그려주는 프레임 */
 	private static Frame frame;
-	/** Screen currently shown. */
+	/** Screen currently shown. // 현재 화면이 표시됨 */
 	private static Screen currentScreen;
-	/** Difficulty settings list. */
+	/** Difficulty settings list. // 난이도 설정 리스트 */
 	private static List<GameSettings> gameSettings;
-	/** Application logger. */
+	/** Application logger. // 응용 프로그램 로거 -> 로그 띄어주는 프로그램 */
 	private static final Logger LOGGER = Logger.getLogger(Core.class
 			.getSimpleName());
-	/** Logger handler for printing to disk. */
+	/** Logger handler for printing to disk. // 디스크에 작성하기 위한 로거 핸들러 */
 	private static Handler fileHandler;
-	/** Logger handler for printing to console. */
+	/** Logger handler for printing to console. // 콘솔로 인쇄하기 위한 로거 핸들러  */
 	private static ConsoleHandler consoleHandler;
 
 
 	/**
-	 * Test implementation.
-	 * 
+	 * Test implementation. // 구현 테스트
+	 *
 	 * @param args
 	 *            Program args, ignored.
 	 */
@@ -111,7 +103,7 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
 		gameSettings.add(SETTINGS_LEVEL_7);
-		
+
 		GameState gameState;
 
 		int returnCode = 1;
@@ -119,61 +111,61 @@ public final class Core {
 			gameState = new GameState(1, 0, MAX_LIVES, 0, 0);
 
 			switch (returnCode) {
-			case 1:
-				// Main menu.
-				currentScreen = new TitleScreen(width, height, FPS);
-				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-						+ " title screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
-				LOGGER.info("Closing title screen.");
-				break;
-			case 2:
-				// Game & score.
-				do {
-					// One extra live every few levels.
-					boolean bonusLife = gameState.getLevel()
-							% EXTRA_LIFE_FRECUENCY == 0
-							&& gameState.getLivesRemaining() < MAX_LIVES;
-					
-					currentScreen = new GameScreen(gameState,
-							gameSettings.get(gameState.getLevel() - 1),
-							bonusLife, width, height, FPS);
+				case 1:
+					// Main menu.
+					currentScreen = new TitleScreen(width, height, FPS);
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-							+ " game screen at " + FPS + " fps.");
-					frame.setScreen(currentScreen);
-					LOGGER.info("Closing game screen.");
+							+ " title screen at " + FPS + " fps.");
+					returnCode = frame.setScreen(currentScreen);
+					LOGGER.info("Closing title screen.");
+					break;
+				case 2:
+					// Game & score.
+					do {
+						// One extra live every few levels.
+						boolean bonusLife = gameState.getLevel()
+								% EXTRA_LIFE_FRECUENCY == 0
+								&& gameState.getLivesRemaining() < MAX_LIVES;
 
-					gameState = ((GameScreen) currentScreen).getGameState();
+						currentScreen = new GameScreen(gameState,
+								gameSettings.get(gameState.getLevel() - 1),
+								bonusLife, width, height, FPS);
+						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+								+ " game screen at " + FPS + " fps.");
+						frame.setScreen(currentScreen);
+						LOGGER.info("Closing game screen.");
 
-					gameState = new GameState(gameState.getLevel() + 1,
-							gameState.getScore(),
-							gameState.getLivesRemaining(),
-							gameState.getBulletsShot(),
-							gameState.getShipsDestroyed());
+						gameState = ((GameScreen) currentScreen).getGameState();
 
-				} while (gameState.getLivesRemaining() > 0
-						&& gameState.getLevel() <= NUM_LEVELS);
+						gameState = new GameState(gameState.getLevel() + 1,
+								gameState.getScore(),
+								gameState.getLivesRemaining(),
+								gameState.getBulletsShot(),
+								gameState.getShipsDestroyed());
 
-				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-						+ " score screen at " + FPS + " fps, with a score of "
-						+ gameState.getScore() + ", "
-						+ gameState.getLivesRemaining() + " lives remaining, "
-						+ gameState.getBulletsShot() + " bullets shot and "
-						+ gameState.getShipsDestroyed() + " ships destroyed.");
-				currentScreen = new ScoreScreen(width, height, FPS, gameState);
-				returnCode = frame.setScreen(currentScreen);
-				LOGGER.info("Closing score screen.");
-				break;
-			case 3:
-				// High scores.
-				currentScreen = new HighScoreScreen(width, height, FPS);
-				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-						+ " high score screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
-				LOGGER.info("Closing high score screen.");
-				break;
-			default:
-				break;
+					} while (gameState.getLivesRemaining() > 0
+							&& gameState.getLevel() <= NUM_LEVELS);
+
+					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+							+ " score screen at " + FPS + " fps, with a score of "
+							+ gameState.getScore() + ", "
+							+ gameState.getLivesRemaining() + " lives remaining, "
+							+ gameState.getBulletsShot() + " bullets shot and "
+							+ gameState.getShipsDestroyed() + " ships destroyed.");
+					currentScreen = new ScoreScreen(width, height, FPS, gameState);
+					returnCode = frame.setScreen(currentScreen);
+					LOGGER.info("Closing score screen.");
+					break;
+				case 3:
+					// High scores.
+					currentScreen = new HighScoreScreen(width, height, FPS);
+					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+							+ " high score screen at " + FPS + " fps.");
+					returnCode = frame.setScreen(currentScreen);
+					LOGGER.info("Closing high score screen.");
+					break;
+				default:
+					break;
 			}
 
 		} while (returnCode != 0);
@@ -184,15 +176,15 @@ public final class Core {
 	}
 
 	/**
-	 * Constructor, not called.
+	 * Constructor, not called. // 생성자, 호출되지 않음
 	 */
 	private Core() {
 
 	}
 
 	/**
-	 * Controls access to the logger.
-	 * 
+	 * Controls access to the logger. // 로거에 대한 접근 제어
+	 *
 	 * @return Application logger.
 	 */
 	public static Logger getLogger() {
@@ -200,8 +192,8 @@ public final class Core {
 	}
 
 	/**
-	 * Controls access to the drawing manager.
-	 * 
+	 * Controls access to the drawing manager. // 화면에 띄어주는? 관리자에 대한 접근 제어
+	 *
 	 * @return Application draw manager.
 	 */
 	public static DrawManager getDrawManager() {
@@ -209,8 +201,8 @@ public final class Core {
 	}
 
 	/**
-	 * Controls access to the input manager.
-	 * 
+	 * Controls access to the input manager. // 입력에 관여하는 관리자에 대한 접근 제어
+	 *
 	 * @return Application input manager.
 	 */
 	public static InputManager getInputManager() {
@@ -218,8 +210,8 @@ public final class Core {
 	}
 
 	/**
-	 * Controls access to the file manager.
-	 * 
+	 * Controls access to the file manager. // 파일 관리자에 대한 접근 제어
+	 *
 	 * @return Application file manager.
 	 */
 	public static FileManager getFileManager() {
@@ -227,8 +219,8 @@ public final class Core {
 	}
 
 	/**
-	 * Controls creation of new cooldowns.
-	 * 
+	 * Controls creation of new cooldowns. // 새로운 재사용 대기열의 생성 제어
+	 *
 	 * @param milliseconds
 	 *            Duration of the cooldown.
 	 * @return A new cooldown.
@@ -238,8 +230,8 @@ public final class Core {
 	}
 
 	/**
-	 * Controls creation of new cooldowns with variance.
-	 * 
+	 * Controls creation of new cooldowns with variance. // 분산된 재사용 대기열의 생성 제어
+	 *
 	 * @param milliseconds
 	 *            Duration of the cooldown.
 	 * @param variance
@@ -247,7 +239,7 @@ public final class Core {
 	 * @return A new cooldown with variance.
 	 */
 	public static Cooldown getVariableCooldown(final int milliseconds,
-			final int variance) {
+											   final int variance) {
 		return new Cooldown(milliseconds, variance);
 	}
 }

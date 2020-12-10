@@ -1,84 +1,138 @@
 package screen;
 
 import java.awt.event.KeyEvent;
+import java.security.Key;
 import java.util.HashSet;
 import java.util.Set;
-
 import engine.Cooldown;
 import engine.Core;
 import engine.GameSettings;
 import engine.GameState;
-import entity.Bullet;
-import entity.BulletPool;
-import entity.EnemyShip;
-import entity.EnemyShipFormation;
-import entity.Entity;
-import entity.Ship;
+import entity.*;
+
+import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Implements the game screen, where the action happens.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public class GameScreen extends Screen {
 
-	/** Milliseconds until the screen accepts user input. */
+	/**
+	 * Milliseconds until the screen accepts user input.
+	 */
 	private static final int INPUT_DELAY = 6000;
-	/** Bonus score for each life remaining at the end of the level. */
+	/**
+	 * Bonus score for each life remaining at the end of the level.
+	 */
 	private static final int LIFE_SCORE = 100;
-	/** Minimum time between bonus ship's appearances. */
+	/**
+	 * Minimum time between bonus ship's appearances.
+	 */
 	private static final int BONUS_SHIP_INTERVAL = 20000;
-	/** Maximum variance in the time between bonus ship's appearances. */
+	/**
+	 * Maximum variance in the time between bonus ship's appearances.
+	 */
 	private static final int BONUS_SHIP_VARIANCE = 10000;
-	/** Time until bonus ship explosion disappears. */
+	/**
+	 * Time until bonus ship explosion disappears.
+	 */
 	private static final int BONUS_SHIP_EXPLOSION = 500;
-	/** Time from finishing the level to screen change. */
+	/**
+	 * Time from finishing the level to screen change.
+	 */
 	private static final int SCREEN_CHANGE_INTERVAL = 1500;
-	/** Height of the interface separation line. */
+	/**
+	 * Height of the interface separation line.
+	 */
 	private static final int SEPARATION_LINE_HEIGHT = 40;
 
-	/** Current game difficulty settings. */
+	/**
+	 * Current game difficulty settings.
+	 */
 	private GameSettings gameSettings;
-	/** Current difficulty level number. */
+	/**
+	 * Current difficulty level number.
+	 */
 	private int level;
-	/** Formation of enemy ships. */
+	/**
+	 * Formation of enemy ships.
+	 */
 	private EnemyShipFormation enemyShipFormation;
-	/** Player's ship. */
+	/**
+	 * Player's ship.
+	 */
 	private Ship ship;
-	/** Bonus enemy ship that appears sometimes. */
+	/**
+	 * Bonus enemy ship that appears sometimes.
+	 */
 	private EnemyShip enemyShipSpecial;
-	/** Minimum time between bonus ship appearances. */
+	/**
+	 * Minimum time between bonus ship appearances.
+	 */
 	private Cooldown enemyShipSpecialCooldown;
-	/** Time until bonus ship explosion disappears. */
+	/**
+	 * Time until bonus ship explosion disappears.
+	 */
 	private Cooldown enemyShipSpecialExplosionCooldown;
-	/** Time from finishing the level to screen change. */
+	/**
+	 * Time from finishing the level to screen change.
+	 */
 	private Cooldown screenFinishedCooldown;
-	/** Set of all bullets fired by on screen ships. */
+	/**
+	 * Set of all bullets fired by on screen ships.
+	 */
 	private Set<Bullet> bullets;
-	/** Current score. */
+	/**
+	 * Current score.
+	 */
 	private int score;
-	/** Player lives left. */
+	/**
+	 * Player lives left.
+	 */
 	private int lives;
-	/** Total bullets shot by the player. */
+	/**
+	 * Total bullets shot by the player.
+	 */
 	private int bulletsShot;
-	/** Total ships destroyed by the player. */
+	/**
+	 * Total ships destroyed by the player.
+	 */
 	private int shipsDestroyed;
-	/** Moment the game starts. */
+	/**
+	 * Moment the game starts.
+	 */
 	private long gameStartTime;
-	/** Checks if the level is finished. */
+	/**
+	 * Checks if the level is finished.
+	 */
 	private boolean levelFinished;
-	/** Checks if a bonus life is received. */
+	/**
+	 * Checks if a bonus life is received.
+	 */
 	private boolean bonusLife;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
+<<<<<<< HEAD
+	 *
+	 * @param gameState    Current game state.
+	 * @param gameSettings Current game settings.
+	 * @param bonusLife    Checks if a bonus life is awarded this level.
+	 * @param width        Screen width.
+	 * @param height       Screen height.
+	 * @param fps          Frames per second, frame rate at which the game is run.
+=======
 	 * 
 	 * @param gameState
 	 *            Current game state.
 	 * @param gameSettings
 	 *            Current game settings.
-	 * @param bonnusLife
+	 * @param bonusLife
 	 *            Checks if a bonus life is awarded this level.
 	 * @param width
 	 *            Screen width.
@@ -86,10 +140,11 @@ public class GameScreen extends Screen {
 	 *            Screen height.
 	 * @param fps
 	 *            Frames per second, frame rate at which the game is run.
+>>>>>>> develop
 	 */
 	public GameScreen(final GameState gameState,
-			final GameSettings gameSettings, final boolean bonusLife,
-			final int width, final int height, final int fps) {
+					  final GameSettings gameSettings, final boolean bonusLife,
+					  final int width, final int height, final int fps) {
 		super(width, height, fps);
 
 		this.gameSettings = gameSettings;
@@ -129,7 +184,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Starts the action.
-	 * 
+	 *
 	 * @return Next screen code.
 	 */
 	public final int run() {
@@ -147,67 +202,75 @@ public class GameScreen extends Screen {
 	protected final void update() {
 		super.update();
 
-		if (this.inputDelay.checkFinished() && !this.levelFinished) {
+		// pause button
+		boolean pauseBtn = inputManager.isKeyDown(KeyEvent.VK_ESCAPE);
+		if(pauseBtn && this.pauseDelay.checkFinished()){
+			pause = !pause;
+			this.pauseDelay.reset();
+		}
 
-			if (!this.ship.isDestroyed()) {
-				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
-						|| inputManager.isKeyDown(KeyEvent.VK_D);
-				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
-						|| inputManager.isKeyDown(KeyEvent.VK_A);
+		if(!pause) {
+			if (this.inputDelay.checkFinished() && !this.levelFinished) {
 
-				boolean isRightBorder = this.ship.getPositionX()
-						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
-				boolean isLeftBorder = this.ship.getPositionX()
-						- this.ship.getSpeed() < 1;
+				if (!this.ship.isDestroyed()) {
+					boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
+							|| inputManager.isKeyDown(KeyEvent.VK_D);
+					boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
+							|| inputManager.isKeyDown(KeyEvent.VK_A);
 
-				if (moveRight && !isRightBorder) {
-					this.ship.moveRight();
+					boolean isRightBorder = this.ship.getPositionX()
+							+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
+					boolean isLeftBorder = this.ship.getPositionX()
+							- this.ship.getSpeed() < 1;
+
+					if (moveRight && !isRightBorder) {
+						this.ship.moveRight();
+					}
+					if (moveLeft && !isLeftBorder) {
+						this.ship.moveLeft();
+					}
+					if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+						if (this.ship.shoot(this.bullets))
+							this.bulletsShot++;
 				}
-				if (moveLeft && !isLeftBorder) {
-					this.ship.moveLeft();
-				}
-				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-					if (this.ship.shoot(this.bullets))
-						this.bulletsShot++;
-			}
 
-			if (this.enemyShipSpecial != null) {
-				if (!this.enemyShipSpecial.isDestroyed())
-					this.enemyShipSpecial.move(2, 0);
-				else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
+				if (this.enemyShipSpecial != null) {
+					if (!this.enemyShipSpecial.isDestroyed())
+						this.enemyShipSpecial.move(2, 0);
+					else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
+						this.enemyShipSpecial = null;
+
+				}
+				if (this.enemyShipSpecial == null
+						&& this.enemyShipSpecialCooldown.checkFinished()) {
+					this.enemyShipSpecial = new EnemyShip();
+					this.enemyShipSpecialCooldown.reset();
+					this.logger.info("A special ship appears");
+				}
+				if (this.enemyShipSpecial != null
+						&& this.enemyShipSpecial.getPositionX() > this.width) {
 					this.enemyShipSpecial = null;
+					this.logger.info("The special ship has escaped");
+				}
 
+				this.ship.update();
+				this.enemyShipFormation.update();
+				this.enemyShipFormation.shoot(this.bullets);
 			}
-			if (this.enemyShipSpecial == null
-					&& this.enemyShipSpecialCooldown.checkFinished()) {
-				this.enemyShipSpecial = new EnemyShip();
-				this.enemyShipSpecialCooldown.reset();
-				this.logger.info("A special ship appears");
-			}
-			if (this.enemyShipSpecial != null
-					&& this.enemyShipSpecial.getPositionX() > this.width) {
-				this.enemyShipSpecial = null;
-				this.logger.info("The special ship has escaped");
-			}
-
-			this.ship.update();
-			this.enemyShipFormation.update();
-			this.enemyShipFormation.shoot(this.bullets);
+			manageCollisions();
+			cleanBullets();
 		}
-
-		manageCollisions();
-		cleanBullets();
 		draw();
+		if(!pause){
+			if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
+					&& !this.levelFinished) {
+				this.levelFinished = true;
+				this.screenFinishedCooldown.reset();
+			}
 
-		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
-				&& !this.levelFinished) {
-			this.levelFinished = true;
-			this.screenFinishedCooldown.reset();
+			if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
+				this.isRunning = false;
 		}
-
-		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
-			this.isRunning = false;
-
 	}
 
 	/**
@@ -238,7 +301,7 @@ public class GameScreen extends Screen {
 		if (!this.inputDelay.checkFinished()) {
 			int countdown = (int) ((INPUT_DELAY
 					- (System.currentTimeMillis()
-							- this.gameStartTime)) / 1000);
+					- this.gameStartTime)) / 1000);
 			drawManager.drawCountDown(this, this.level, countdown,
 					this.bonusLife);
 			drawManager.drawHorizontalLine(this, this.height / 2 - this.height
@@ -246,7 +309,11 @@ public class GameScreen extends Screen {
 			drawManager.drawHorizontalLine(this, this.height / 2 + this.height
 					/ 12);
 		}
-
+		if(this.pause){
+			drawManager.drawPause(this);
+			drawManager.drawHorizontalLine(this, this.height / 2 - this.height / 12);
+			drawManager.drawHorizontalLine(this, this.height / 2 + this.height / 12);
+		}
 		drawManager.completeDrawing(this);
 	}
 
@@ -306,11 +373,9 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Checks if two entities are colliding.
-	 * 
-	 * @param a
-	 *            First entity, the bullet.
-	 * @param b
-	 *            Second entity, the ship.
+	 *
+	 * @param a First entity, the bullet.
+	 * @param b Second entity, the ship.
 	 * @return Result of the collision test.
 	 */
 	private boolean checkCollision(final Entity a, final Entity b) {
@@ -331,7 +396,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Returns a GameState object representing the status of the game.
-	 * 
+	 *
 	 * @return Current game state.
 	 */
 	public final GameState getGameState() {

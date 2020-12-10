@@ -1,18 +1,9 @@
 package engine;
 
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import engine.DrawManager.SpriteType;
+
+import java.awt.*;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -20,8 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import engine.DrawManager.SpriteType;
 
 /**
  * Manages files used in the application.
@@ -51,8 +40,9 @@ public final class FileManager {
 	 * @return Shared instance of FileManager.
 	 */
 	protected static FileManager getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new FileManager();
+		}
 		return instance;
 	}
 
@@ -75,26 +65,30 @@ public final class FileManager {
 			char c;
 
 			// Sprite loading.
-			for (Map.Entry<SpriteType, boolean[][]> sprite : spriteMap
-					.entrySet()) {
-				for (int i = 0; i < sprite.getValue().length; i++)
+			for (Map.Entry<SpriteType, boolean[][]> sprite : spriteMap.entrySet()) {
+				for (int i = 0; i < sprite.getValue().length; i++) {
 					for (int j = 0; j < sprite.getValue()[i].length; j++) {
-						do
+						do {
 							c = (char) inputStream.read();
-						while (c != '0' && c != '1');
+						}while (c != '0' && c != '1');
 
-						if (c == '1')
+						if (c == '1') {
 							sprite.getValue()[i][j] = true;
-						else
+						}
+						else {
 							sprite.getValue()[i][j] = false;
+						}
 					}
-				logger.fine("Sprite " + sprite.getKey() + " loaded.");
+					logger.fine("Sprite " + sprite.getKey() + " loaded.");
+				}
 			}
-			if (inputStream != null)
+			if (inputStream != null) {
 				inputStream.close();
+			}
 		} finally {
-			if (inputStream != null)
+			if (inputStream != null) {
 				inputStream.close();
+			}
 		}
 	}
 
@@ -121,8 +115,9 @@ public final class FileManager {
 			font = Font.createFont(Font.TRUETYPE_FONT, inputStream).deriveFont(
 					size);
 		} finally {
-			if (inputStream != null)
+			if (inputStream != null) {
 				inputStream.close();
+			}
 		}
 
 		return font;
@@ -157,8 +152,9 @@ public final class FileManager {
 				score = reader.readLine();
 			}
 		} finally {
-			if (inputStream != null)
+			if (inputStream != null) {
 				inputStream.close();
+			}
 		}
 
 		return highScores;
@@ -217,8 +213,9 @@ public final class FileManager {
 			logger.info("Loading default high scores.");
 			highScores = loadDefaultHighScores(gamemode);
 		} finally {
-			if (bufferedReader != null)
+			if (bufferedReader != null) {
 				bufferedReader.close();
+			}
 		}
 
 		Collections.sort(highScores);
@@ -254,8 +251,9 @@ public final class FileManager {
 			scoresPath += "scores"+gamemode;
 			scoresFile = new File(scoresPath);
 
-			if (!scoresFile.exists())
+			if (!scoresFile.exists()) {
 				scoresFile.createNewFile();
+			}
 
 			outputStream = new FileOutputStream(scoresFile);
 			bufferedWriter = new BufferedWriter(new OutputStreamWriter(
@@ -266,8 +264,9 @@ public final class FileManager {
 			// Saves 7 or less scores.
 			int savedCount = 0;
 			for (Score score : highScores) {
-				if (savedCount >= MAX_SCORES)
+				if (savedCount >= MAX_SCORES) {
 					break;
+				}
 				bufferedWriter.write(score.getName());
 				bufferedWriter.newLine();
 				bufferedWriter.write(Integer.toString(score.getScore()));
@@ -276,8 +275,9 @@ public final class FileManager {
 			}
 
 		} finally {
-			if (bufferedWriter != null)
+			if (bufferedWriter != null) {
 				bufferedWriter.close();
+			}
 		}
 	}
 }

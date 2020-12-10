@@ -383,16 +383,18 @@ public class GameScreen extends Screen {
 		}
 
 
-		if (this.enemyShipSpecial != null)
+		if (this.enemyShipSpecial != null) {
 			drawManager.drawEntity(this.enemyShipSpecial,
 					this.enemyShipSpecial.getPositionX(),
 					this.enemyShipSpecial.getPositionY());
+		}
 
 		enemyShipFormation.draw();
 
-		for (Bullet bullet : this.bullets)
+		for (Bullet bullet : this.bullets) {
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
 					bullet.getPositionY());
+		}
 
 		// Interface.
 		drawManager.drawScore(this, this.score);
@@ -422,13 +424,15 @@ public class GameScreen extends Screen {
 	/**
 	 * Cleans bullets that go off screen.
 	 */
+
 	private void cleanBullets() {
 		Set<Bullet> recyclable = new HashSet<Bullet>();
 		for (Bullet bullet : this.bullets) {
 			bullet.update();
 			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
-					|| bullet.getPositionY() > this.height)
+					|| bullet.getPositionY() > this.height) {
 				recyclable.add(bullet);
+			}
 		}
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
@@ -437,6 +441,7 @@ public class GameScreen extends Screen {
 	/**
 	 * Manages collisions between bullets and ships.
 	 */
+
 	private void manageCollisions() {
 		Set<Bullet> recyclable = new HashSet<Bullet>();
 		for (Bullet bullet : this.bullets)
@@ -477,10 +482,10 @@ public class GameScreen extends Screen {
 
 				}
 
+			}
 
-
-			} else {
-				for (EnemyShip enemyShip : this.enemyShipFormation)
+			else {
+				for (EnemyShip enemyShip : this.enemyShipFormation) {
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
 						this.score += enemyShip.getPointValue();
@@ -488,6 +493,7 @@ public class GameScreen extends Screen {
 						this.enemyShipFormation.destroy(enemyShip);
 						recyclable.add(bullet);
 					}
+				}
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
 						&& checkCollision(bullet, this.enemyShipSpecial)) {

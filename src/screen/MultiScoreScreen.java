@@ -91,14 +91,14 @@ public class MultiScoreScreen extends Screen {
 			}
 			else if(highScores.size() < MAX_HIGH_SCORE_NUM && (score1 < score2)){
 				this.isNewRecord2 = true;
-				select = 2;
+				select = 1;
 			}
 			else if(highScores.get(highScores.size() - 1).getScore() < this.score1){
 				this.isNewRecord1 = true;
 			}
 			else if(highScores.get(highScores.size() - 1).getScore() < this.score2){
 				this.isNewRecord2 = true;
-				select = 2;
+				select = 1;
 			}
 
 		} catch (IOException e) {
@@ -145,8 +145,14 @@ public class MultiScoreScreen extends Screen {
 			// 플레이어 1 기록
 			if (this.select==0 && this.isNewRecord1 && this.selectionCooldown.checkFinished()) {
 				if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)) {
-					if(this.nameCharSelected1 == 2){
-						select = 1;
+					if(this.nameCharSelected1 >= 2){
+						if(isNewRecord2){
+							select = 1;
+							nameCharSelected2=0;
+						}
+						else{
+							nameCharSelected1=0;
+						}
 					}
 					else{
 						nameCharSelected1++;
@@ -154,7 +160,16 @@ public class MultiScoreScreen extends Screen {
 					this.selectionCooldown.reset();
 				}
 				if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
-					if(this.nameCharSelected1 > 0){
+					if(this.nameCharSelected1<=0){
+						if(isNewRecord2){
+							select=1;
+							nameCharSelected2=2;
+						}
+						else{
+							nameCharSelected1=2;
+						}
+					}
+					else{
 						nameCharSelected1--;
 					}
 					this.selectionCooldown.reset();
@@ -178,16 +193,32 @@ public class MultiScoreScreen extends Screen {
 			// 플레이어 2 기록
 			if (this.select==1 && this.isNewRecord2 && this.selectionCooldown.checkFinished()) {
 				if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)) {
-					this.nameCharSelected2 = this.nameCharSelected2 == 2 ? 0
-							: this.nameCharSelected2 + 1;
-					this.selectionCooldown.reset();
-				}
-				if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
-					if(nameCharSelected2 == 0){
-						select = 0;
+					if(nameCharSelected2>=2){
+						if(isNewRecord1){
+							select=0;
+							nameCharSelected1=0;
+						}
+						else{
+							nameCharSelected2=0;
+						}
 					}
 					else{
 						nameCharSelected2++;
+					}
+					this.selectionCooldown.reset();
+				}
+				if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
+					if(nameCharSelected2 <= 0){
+						if(isNewRecord1){
+							select = 0;
+							nameCharSelected1=2;
+						}
+						else{
+							nameCharSelected2=2;
+						}
+					}
+					else{
+						nameCharSelected2--;
 					}
 					this.selectionCooldown.reset();
 				}

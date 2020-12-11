@@ -179,11 +179,11 @@ public class GameScreen extends Screen {
 		this.lives = gameState1.getLivesRemaining();
 		this.color = color;
 		this.color2 = color2;
-		if (this.bonusLife) {
+		if (this.bonusLife && this.lives>0) {
 			this.lives++;
 		}
 		this.lives2 = gameState2.getLivesRemaining();
-		if (this.bonusLife2) {
+		if (this.bonusLife2 && this.lives2>0) {
 			this.lives2++;
 		}
 		this.bulletsShot = gameState1.getBulletsShot();

@@ -550,12 +550,12 @@ public final class DrawManager {
 		}
 		if(isNewRecord2 && !isNewRecord1){
 			String newRecordString = "New Record!";
-			String introduceNameString = "Player2 name:";
+			String introduceNameString2 = "Player2 name:";
 
 			backBufferGraphics.setColor(Color.GREEN);
 			drawCenteredRegularString(screen, newRecordString, screen.getHeight() / 4 + fontRegularMetrics.getHeight() * 10);
 			backBufferGraphics.setColor(Color.WHITE);
-			drawCenteredRegularString(screen, introduceNameString, screen.getHeight() / 4 + fontRegularMetrics.getHeight() * 12);
+			drawCenteredRegularString(screen, introduceNameString2, screen.getHeight() / 4 + fontRegularMetrics.getHeight() * 12);
 
 			// 3 letters name.
 			int positionX = screen.getWidth()
@@ -663,7 +663,7 @@ public final class DrawManager {
 		}
 		String continueOrExitString = "Press Space to play again, Escape to exit";
 
-		int height = isNewRecord1 ? 4:3;
+		int height = isNewRecord1 || isNewRecord2 ? 4:3;
 
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, gameOverString, screen.getHeight() / height - fontBigMetrics.getHeight() * 2);

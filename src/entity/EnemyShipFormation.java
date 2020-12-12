@@ -1,18 +1,14 @@
 package entity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import screen.Screen;
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager;
 import engine.DrawManager.SpriteType;
 import engine.GameSettings;
+import screen.Screen;
+
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Groups enemy ships into a formation that moves together.
@@ -103,7 +99,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		LEFT,
 		/** Movement to the bottom of the screen. */
 		DOWN
-	};
+	}
 
 	/**
 	 * Constructor, sets the initial conditions.
@@ -133,18 +129,22 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				+ " ship formation in (" + positionX + "," + positionY + ")");
 
 		// Each sub-list is a column on the formation.
-		for (int i = 0; i < this.nShipsWide; i++)
+		for (int i = 0; i < this.nShipsWide; i++) {
 			this.enemyShips.add(new ArrayList<EnemyShip>());
+		}
 
 		for (List<EnemyShip> column : this.enemyShips) {
 			for (int i = 0; i < this.nShipsHigh; i++) {
-				if (i / (float) this.nShipsHigh < PROPORTION_C)
+				if (i / (float) this.nShipsHigh < PROPORTION_C) {
 					spriteType = SpriteType.EnemyShipC1;
+				}
 				else if (i / (float) this.nShipsHigh < PROPORTION_B
-						+ PROPORTION_C)
+						+ PROPORTION_C) {
 					spriteType = SpriteType.EnemyShipB1;
-				else
+				}
+				else {
 					spriteType = SpriteType.EnemyShipA1;
+				}
 
 				column.add(new EnemyShip((SEPARATION_DISTANCE 
 						* this.enemyShips.indexOf(column))
@@ -162,8 +162,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.height = (this.nShipsHigh - 1) * SEPARATION_DISTANCE
 				+ this.shipHeight;
 
-		for (List<EnemyShip> column : this.enemyShips)
+		for (List<EnemyShip> column : this.enemyShips) {
 			this.shooters.add(column.get(column.size() - 1));
+		}
 	}
 
 	/**
@@ -180,10 +181,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * Draws every individual component of the formation.
 	 */
 	public final void draw() {
-		for (List<EnemyShip> column : this.enemyShips)
-			for (EnemyShip enemyShip : column)
+		for (List<EnemyShip> column : this.enemyShips) {
+			for (EnemyShip enemyShip : column) {
 				drawManager.drawEntity(enemyShip, enemyShip.getPositionX(),
 						enemyShip.getPositionY());
+			}
+		}
 	}
 
 	/**
@@ -218,7 +221,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			boolean isAtHorizontalAltitude = positionY % DESCENT_DISTANCE == 0;
 
 			if (currentDirection == Direction.DOWN) {
-				if (isAtHorizontalAltitude)
+				if (isAtHorizontalAltitude) {
 					if (previousDirection == Direction.RIGHT) {
 						currentDirection = Direction.LEFT;
 						this.logger.info("Formation now moving left 1");
@@ -226,8 +229,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						currentDirection = Direction.RIGHT;
 						this.logger.info("Formation now moving right 2");
 					}
-			} else if (currentDirection == Direction.LEFT) {
-				if (isAtLeftSide)
+				}
+			}
+			else if (currentDirection == Direction.LEFT) {
+				if (isAtLeftSide) {
 					if (!isAtBottom) {
 						previousDirection = currentDirection;
 						currentDirection = Direction.DOWN;
@@ -236,8 +241,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						currentDirection = Direction.RIGHT;
 						this.logger.info("Formation now moving right 4");
 					}
-			} else {
-				if (isAtRightSide)
+				}
+			}
+			else {
+				if (isAtRightSide) {
 					if (!isAtBottom) {
 						previousDirection = currentDirection;
 						currentDirection = Direction.DOWN;
@@ -246,14 +253,18 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						currentDirection = Direction.LEFT;
 						this.logger.info("Formation now moving left 6");
 					}
+				}
 			}
 
-			if (currentDirection == Direction.RIGHT)
+			if (currentDirection == Direction.RIGHT) {
 				movementX = X_SPEED;
-			else if (currentDirection == Direction.LEFT)
+			}
+			else if (currentDirection == Direction.LEFT) {
 				movementX = -X_SPEED;
-			else
+			}
+			else {
 				movementY = Y_SPEED;
+			}
 
 			positionX += movementX;
 			positionY += movementY;
@@ -273,11 +284,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				column.removeAll(destroyed);
 			}
 
-			for (List<EnemyShip> column : this.enemyShips)
+			for (List<EnemyShip> column : this.enemyShips) {
 				for (EnemyShip enemyShip : column) {
 					enemyShip.move(movementX, movementY);
 					enemyShip.update();
 				}
+			}
 		}
 	}
 
@@ -296,7 +308,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				maxColumn = Math.max(maxColumn, columnSize);
 				minPositionY = Math.min(minPositionY, column.get(0)
 						.getPositionY());
-			} else {
+			}
+			else {
 				// Empty column, we remove it.
 				emptyColumns.add(this.enemyShips.indexOf(column));
 			}
@@ -311,8 +324,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		
 		for (List<EnemyShip> column : this.enemyShips) {
 			if (!column.isEmpty()) {
-				if (leftMostPoint == 0)
+				if (leftMostPoint == 0) {
 					leftMostPoint = column.get(0).getPositionX();
+				}
 				rightMostPoint = column.get(0).getPositionX();
 			}
 		}
@@ -349,30 +363,34 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 *            Ship to be destroyed.
 	 */
 	public final void destroy(final EnemyShip destroyedShip) {
-		for (List<EnemyShip> column : this.enemyShips)
-			for (int i = 0; i < column.size(); i++)
+		for (List<EnemyShip> column : this.enemyShips) {
+			for (int i = 0; i < column.size(); i++) {
 				if (column.get(i).equals(destroyedShip)) {
 					column.get(i).destroy();
 					this.logger.info("Destroyed ship in ("
 							+ this.enemyShips.indexOf(column) + "," + i + ")");
 				}
+			}
+		}
 
 		// Updates the list of ships that can shoot the player.
 		if (this.shooters.contains(destroyedShip)) {
 			int destroyedShipIndex = this.shooters.indexOf(destroyedShip);
 			int destroyedShipColumnIndex = -1;
 
-			for (List<EnemyShip> column : this.enemyShips)
+			for (List<EnemyShip> column : this.enemyShips) {
 				if (column.contains(destroyedShip)) {
 					destroyedShipColumnIndex = this.enemyShips.indexOf(column);
 					break;
 				}
+			}
 
 			EnemyShip nextShooter = getNextShooter(this.enemyShips
 					.get(destroyedShipColumnIndex));
 
-			if (nextShooter != null)
+			if (nextShooter != null) {
 				this.shooters.set(destroyedShipIndex, nextShooter);
+			}
 			else {
 				this.shooters.remove(destroyedShipIndex);
 				this.logger.info("Shooters list reduced to "
@@ -395,8 +413,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		EnemyShip nextShooter = null;
 		while (iterator.hasNext()) {
 			EnemyShip checkShip = iterator.next();
-			if (checkShip != null && !checkShip.isDestroyed())
+			if (checkShip != null && !checkShip.isDestroyed()) {
 				nextShooter = checkShip;
+			}
 		}
 
 		return nextShooter;
@@ -411,9 +430,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public final Iterator<EnemyShip> iterator() {
 		Set<EnemyShip> enemyShipsList = new HashSet<EnemyShip>();
 
-		for (List<EnemyShip> column : this.enemyShips)
-			for (EnemyShip enemyShip : column)
+		for (List<EnemyShip> column : this.enemyShips) {
+			for (EnemyShip enemyShip : column) {
 				enemyShipsList.add(enemyShip);
+			}
+		}
 
 		return enemyShipsList.iterator();
 	}

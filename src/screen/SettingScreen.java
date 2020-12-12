@@ -2,12 +2,8 @@ package screen;
 
 import engine.Cooldown;
 import engine.Core;
-import engine.Score;
 
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,11 +16,12 @@ public class SettingScreen extends Screen {
 
     /** Milliseconds between changes in user selection. */
     private static final int SELECTION_TIME = 200;
-
+    private static final int COLORSET_NUM = 5;
     /** List of past high scores. */
     protected int select;
     protected int difficulty;
     protected int playermode;
+    protected int colorSet;
     private Cooldown selectionCooldown;
     Map<String,Integer> dic;
     /**
@@ -42,6 +39,7 @@ public class SettingScreen extends Screen {
         this.select = 0;
         this.difficulty = dic.get("DIFFICULTY");
         this.playermode = dic.get("PLAYERMODE");
+        this.colorSet = dic.get("COLORSET");
         this.returnCode = 1;
         this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
         this.selectionCooldown.reset();
@@ -71,8 +69,12 @@ public class SettingScreen extends Screen {
         if ((inputManager.isKeyDown(KeyEvent.VK_SPACE) || (inputManager.isKeyDown(KeyEvent.VK_ESCAPE))) && this.inputDelay.checkFinished()) {
             this.isRunning = false;
         }
-        if ((inputManager.isKeyDown(KeyEvent.VK_UP) || inputManager.isKeyDown(KeyEvent.VK_W) || inputManager.isKeyDown(KeyEvent.VK_S) || inputManager.isKeyDown(KeyEvent.VK_DOWN)) && this.selectionCooldown.checkFinished()) {
-            changeItem();
+        if ((inputManager.isKeyDown(KeyEvent.VK_UP) || inputManager.isKeyDown(KeyEvent.VK_W)) && this.selectionCooldown.checkFinished()) {
+            prevChangeItem();
+            this.selectionCooldown.reset();
+        }
+        if((inputManager.isKeyDown(KeyEvent.VK_S) || inputManager.isKeyDown(KeyEvent.VK_DOWN)&&this.selectionCooldown.checkFinished())){
+            nextChangeItem();
             this.selectionCooldown.reset();
         }
         if((inputManager.isKeyDown(KeyEvent.VK_RIGHT) || inputManager.isKeyDown(KeyEvent.VK_D)) && this.selectionCooldown.checkFinished()){
@@ -95,6 +97,15 @@ public class SettingScreen extends Screen {
                 }
                 this.dic.put("PLAYERMODE",this.playermode);
             }
+            if(this.select == 2){
+                if(this.colorSet >= COLORSET_NUM-1){
+                    this.colorSet = 0;
+                }
+                else{
+                    this.colorSet++;
+                }
+                this.dic.put("COLORSET",this.colorSet);
+            }
         }
         if((inputManager.isKeyDown(KeyEvent.VK_LEFT) || inputManager.isKeyDown(KeyEvent.VK_A)) && this.selectionCooldown.checkFinished()){
             this.selectionCooldown.reset();
@@ -116,14 +127,33 @@ public class SettingScreen extends Screen {
                 }
                 this.dic.put("PLAYERMODE",this.playermode);
             }
+            if(this.select == 2){
+                if(this.colorSet == 0){
+                    this.colorSet = COLORSET_NUM-1;
+                }
+                else{
+                    this.colorSet--;
+                }
+                this.dic.put("COLORSET",this.colorSet);
+            }
         }
     }
 
-    private void changeItem() {
-        if (this.select == 0)
-            this.select = 1;
+    private void prevChangeItem() {
+        if (this.select == 0) {
+            this.select = 2;
+        }
         else{
+            this.select--;
+        }
+    }
+
+    private void nextChangeItem(){
+        if(this.select==2){
             this.select = 0;
+        }
+        else{
+            this.select++;
         }
     }
     /**
@@ -132,7 +162,7 @@ public class SettingScreen extends Screen {
     private void draw() {
         drawManager.initDrawing(this);
         drawManager.drawSetting(this);
-        drawManager.drawSettingMenu(this,select,difficulty,playermode);
+        drawManager.drawSettingMenu(this,select,difficulty,playermode,colorSet);
 
         drawManager.completeDrawing(this);
     }

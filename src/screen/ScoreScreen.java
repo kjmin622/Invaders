@@ -1,14 +1,14 @@
 package screen;
 
-import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
 import engine.Cooldown;
 import engine.Core;
 import engine.GameState;
 import engine.Score;
+
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Implements the score screen.
@@ -47,6 +47,8 @@ public class ScoreScreen extends Screen {
 	private Cooldown selectionCooldown;
 
 	private int gamemode;
+
+	private boolean clear;
 	/**
 	 * Constructor, establishes the properties of the screen.
 	 * 
@@ -71,14 +73,15 @@ public class ScoreScreen extends Screen {
 		this.nameCharSelected = 0;
 		this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
 		this.selectionCooldown.reset();
-		this.gamemode = (playermode*4) + difficulty;
-
+		this.gamemode = (playermode * 4) + difficulty;
+		this.clear = gameState.getLivesRemaining() > 0;
 		try {
 			this.highScores = Core.getFileManager().loadHighScores(gamemode);
 			if (highScores.size() < MAX_HIGH_SCORE_NUM
 					|| highScores.get(highScores.size() - 1).getScore()
-					< this.score)
+					< this.score) {
 				this.isNewRecord = true;
+			}
 
 		} catch (IOException e) {
 			logger.warning("Couldn't load high scores!");
@@ -108,14 +111,17 @@ public class ScoreScreen extends Screen {
 				// Return to main menu.
 				this.returnCode = 1;
 				this.isRunning = false;
-				if (this.isNewRecord)
+				if (this.isNewRecord) {
 					saveScore();
-			} else if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+				}
+			}
+			else if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
 				// Play again.
 				this.returnCode = 2;
 				this.isRunning = false;
-				if (this.isNewRecord)
+				if (this.isNewRecord) {
 					saveScore();
+				}
 			}
 
 			if (this.isNewRecord && this.selectionCooldown.checkFinished()) {
@@ -154,8 +160,9 @@ public class ScoreScreen extends Screen {
 	private void saveScore() {
 		highScores.add(new Score(new String(this.name), score));
 		Collections.sort(highScores);
-		if (highScores.size() > MAX_HIGH_SCORE_NUM)
+		if (highScores.size() > MAX_HIGH_SCORE_NUM) {
 			highScores.remove(highScores.size() - 1);
+		}
 
 		try {
 			Core.getFileManager().saveHighScores(highScores,gamemode);
@@ -170,14 +177,13 @@ public class ScoreScreen extends Screen {
 	private void draw() {
 		drawManager.initDrawing(this);
 
-		drawManager.drawGameOver(this, this.inputDelay.checkFinished(),
-				this.isNewRecord);
+		drawManager.drawGameOver(this, this.inputDelay.checkFinished(), this.isNewRecord, this.clear);
 		drawManager.drawResults(this, this.score, this.livesRemaining,
-				this.shipsDestroyed, (float) this.shipsDestroyed
-						/ this.bulletsShot, this.isNewRecord);
+				this.shipsDestroyed, this.bulletsShot!=0 ? (float) this.shipsDestroyed / this.bulletsShot : 0, this.isNewRecord);
 
-		if (this.isNewRecord)
+		if (this.isNewRecord) {
 			drawManager.drawNameInput(this, this.name, this.nameCharSelected);
+		}
 
 		drawManager.completeDrawing(this);
 	}

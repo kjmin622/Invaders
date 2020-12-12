@@ -2,6 +2,7 @@ package engine;
 
 import screen.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,13 @@ public final class Core {
 	private static int DIFFICULTY = 0; // 0: easy  1: normal  2: hard 3: extra hard
 	/** PLAYERMODE */
 	private static int PLAYERMODE = 0; // 0:single 1:double
+	/** colorset */
+	private static int COLORSET = 0; // 0:green-yellow 1:red-blue
+	private static final Color[] colorSet = {Color.GREEN,Color.YELLOW,
+			new Color(92,209,229),new Color(197,254,221),
+			new Color(253, 254, 228),new Color(253, 219, 249),
+			new Color(208, 219, 249),new Color(255, 251, 209),
+			new Color(230, 230, 230),new Color(255,255,255)};
 
 	/** Max lives. //최대 생명 개수 */
 	private static final int MAX_LIVES = 3; // (1인용) 기본 생명 개수 설정
@@ -132,15 +140,12 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_6[DIFFICULTY]);
 		gameSettings.add(SETTINGS_LEVEL_7[DIFFICULTY]);
 
-		GameState gameState;
-
+		GameState gameState, gameState2;
 		int returnCode = 1;
 		do {
 
 			gameState = new GameState(1, 0, MAX_LIVES, 0, 0);
-			if(PLAYERMODE == 1){
-				gameState = new GameState(1, 0, MAX_LIVES*2, 0, 0);
-			}
+			gameState2 = new GameState(1, 0, MAX_LIVES, 0, 0);
 
 			switch (returnCode) {
 				case 1:
@@ -152,41 +157,72 @@ public final class Core {
 					LOGGER.info("Closing title screen.");
 					break;
 				case 2:
-					// Game & score.
-					do {
-						// One extra live every few levels.
-						boolean bonusLife = gameState.getLevel()
-								% EXTRA_LIFE_FRECUENCY == 0
-								&& gameState.getLivesRemaining() < MAX_LIVES;
+					if(PLAYERMODE==0) {
+						// Game & score.
+						do {
+							// One extra live every few levels.
+							boolean bonusLife = gameState.getLevel()
+									% EXTRA_LIFE_FRECUENCY == 0
+									&& gameState.getLivesRemaining() < MAX_LIVES;
 
-						currentScreen = new GameScreen(gameState,
-								gameSettings.get(gameState.getLevel() - 1),
-								bonusLife, width, height, FPS, PLAYERMODE);
+							currentScreen = new GameScreen(gameState,
+									gameSettings.get(gameState.getLevel() - 1),
+									bonusLife, width, height, FPS, PLAYERMODE,colorSet[COLORSET*2]);
+							LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+									+ " game screen at " + FPS + " fps.");
+							frame.setScreen(currentScreen);
+							LOGGER.info("Closing game screen.");
+
+							gameState = ((GameScreen) currentScreen).getGameState();
+
+							gameState = new GameState(gameState.getLevel() + 1,
+									gameState.getScore(),
+									gameState.getLivesRemaining(),
+									gameState.getBulletsShot(),
+									gameState.getShipsDestroyed());
+
+						} while (gameState.getLivesRemaining() > 0
+								&& gameState.getLevel() <= NUM_LEVELS);
+
 						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-								+ " game screen at " + FPS + " fps.");
-						frame.setScreen(currentScreen);
-						LOGGER.info("Closing game screen.");
+								+ " score screen at " + FPS + " fps, with a score of "
+								+ gameState.getScore() + ", "
+								+ gameState.getLivesRemaining() + " lives remaining, "
+								+ gameState.getBulletsShot() + " bullets shot and "
+								+ gameState.getShipsDestroyed() + " ships destroyed.");
+						currentScreen = new ScoreScreen(width, height, FPS, gameState, PLAYERMODE, DIFFICULTY);
+						returnCode = frame.setScreen(currentScreen);
+						LOGGER.info("Closing score screen.");
+					}
+					else if(PLAYERMODE==1){
+						do{
+							boolean bonusLife1 = gameState.getLevel() % EXTRA_LIFE_FRECUENCY == 0 && gameState.getLivesRemaining() < MAX_LIVES;
+							boolean bonusLife2 = gameState2.getLevel() % EXTRA_LIFE_FRECUENCY == 0 && gameState2.getLivesRemaining() < MAX_LIVES;
+							currentScreen = new GameScreen(gameState, bonusLife1,gameState2,bonusLife2, gameSettings.get(gameState.getLevel() - 1), width, height, FPS, PLAYERMODE,colorSet[COLORSET*2],colorSet[COLORSET*2+1]);
+							LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+									+ " game screen at " + FPS + " fps.");
+							frame.setScreen(currentScreen);
+							LOGGER.info("Closing game screen.");
+							gameState = ((GameScreen) currentScreen).getGameState();
+							gameState = new GameState(gameState.getLevel() + 1,
+									gameState.getScore(),
+									gameState.getLivesRemaining(),
+									gameState.getBulletsShot(),
+									gameState.getShipsDestroyed());
+							gameState2 = ((GameScreen) currentScreen).getGameState2();
+							gameState2 = new GameState(gameState2.getLevel() + 1,
+									gameState2.getScore(),
+									gameState2.getLivesRemaining(),
+									gameState2.getBulletsShot(),
+									gameState2.getShipsDestroyed());
 
-						gameState = ((GameScreen) currentScreen).getGameState();
-
-						gameState = new GameState(gameState.getLevel() + 1,
-								gameState.getScore(),
-								gameState.getLivesRemaining(),
-								gameState.getBulletsShot(),
-								gameState.getShipsDestroyed());
-
-					} while (gameState.getLivesRemaining() > 0
-							&& gameState.getLevel() <= NUM_LEVELS);
-
-					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-							+ " score screen at " + FPS + " fps, with a score of "
-							+ gameState.getScore() + ", "
-							+ gameState.getLivesRemaining() + " lives remaining, "
-							+ gameState.getBulletsShot() + " bullets shot and "
-							+ gameState.getShipsDestroyed() + " ships destroyed.");
-					currentScreen = new ScoreScreen(width, height, FPS, gameState, PLAYERMODE, DIFFICULTY);
-					returnCode = frame.setScreen(currentScreen);
-					LOGGER.info("Closing score screen.");
+						}while ((gameState.getLivesRemaining() > 0 || gameState2.getLivesRemaining()>0) && gameState.getLevel() <= NUM_LEVELS);
+						LOGGER.info("Player1 : Starting " + WIDTH + "x" + HEIGHT + " score screen at " + FPS + " fps, with a score of " + gameState.getScore() + ", " + gameState.getLivesRemaining() + " lives remaining, " + gameState.getBulletsShot() + " bullets shot and " + gameState.getShipsDestroyed() + " ships destroyed.");
+						LOGGER.info("Player2 : Starting " + WIDTH + "x" + HEIGHT + " score screen at " + FPS + " fps, with a score of " + gameState2.getScore() + ", " + gameState2.getLivesRemaining() + " lives remaining, " + gameState2.getBulletsShot() + " bullets shot and " + gameState2.getShipsDestroyed() + " ships destroyed.");
+						currentScreen = new MultiScoreScreen(width, height, FPS, gameState, gameState2, PLAYERMODE, DIFFICULTY);
+						returnCode = frame.setScreen(currentScreen);
+						LOGGER.info("Closing score screen.");
+					}
 					break;
 				case 3:
 					// High scores.
@@ -200,10 +236,12 @@ public final class Core {
 					Map<String, Integer> setDic = new HashMap<String,Integer>();
 					setDic.put("DIFFICULTY",DIFFICULTY);
 					setDic.put("PLAYERMODE",PLAYERMODE);
+					setDic.put("COLORSET",COLORSET);
 					currentScreen = new SettingScreen(width,height,FPS,setDic);
 					returnCode = frame.setScreen(currentScreen);
 					DIFFICULTY = setDic.get("DIFFICULTY");
 					PLAYERMODE = setDic.get("PLAYERMODE");
+					COLORSET = setDic.get("COLORSET");
 					gameSettings.clear();
 					gameSettings.add(SETTINGS_LEVEL_1[DIFFICULTY]);
 					gameSettings.add(SETTINGS_LEVEL_2[DIFFICULTY]);

@@ -76,14 +76,20 @@ public class Ship extends Entity {
 		return false;
 	}
 
+	public final void resetShootingCooldown(){
+		this.shootingCooldown.reset();
+	}
+
 	/**
 	 * Updates status of the ship.
 	 */
 	public final void update() {
-		if (!this.destructionCooldown.checkFinished())
+		if (!this.destructionCooldown.checkFinished()) {
 			this.spriteType = SpriteType.ShipDestroyed;
-		else
+		}
+		else {
 			this.spriteType = SpriteType.Ship;
+		}
 	}
 
 	/**

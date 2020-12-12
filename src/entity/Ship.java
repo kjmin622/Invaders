@@ -76,6 +76,10 @@ public class Ship extends Entity {
 		return false;
 	}
 
+	public final void resetShootingCooldown(){
+		this.shootingCooldown.reset();
+	}
+
 	/**
 	 * Updates status of the ship.
 	 */

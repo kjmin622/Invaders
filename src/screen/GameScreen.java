@@ -254,6 +254,10 @@ public class GameScreen extends Screen {
 		if(pauseBtn && this.pauseDelay.checkFinished()){
 			pause = !pause;
 			this.pauseDelay.reset();
+			this.ship.resetShootingCooldown();
+			if(gamemode==1){
+				this.ship2.resetShootingCooldown();
+			}
 		}
 		if(pause && inputManager.isKeyDown(KeyEvent.VK_Q) && this.pauseDelay.checkFinished()){
 			pause = !pause;

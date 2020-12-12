@@ -403,10 +403,9 @@ public class GameScreen extends Screen {
 			if(lives>0 || this.ship.isDestroyed()){
 				drawManager.drawEntity(this.ship, this.ship.getPositionX(), this.ship.getPositionY());
 			}
-			if(lives2>0 || this.ship.isDestroyed()){
+			if(lives2>0 || this.ship2.isDestroyed()){
 				drawManager.drawEntity(this.ship2, this.ship2.getPositionX(), this.ship2.getPositionY());
 			}
-
 		}
 
 

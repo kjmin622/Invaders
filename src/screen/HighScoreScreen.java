@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +93,7 @@ public class HighScoreScreen extends Screen {
 		super.update();
 		draw();
 
-		if ((inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) && this.selectionCooldown.checkFinished()) {
+		if ((inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isKeyDown(KeyEvent.VK_ESCAPE) || inputManager.isKeyDown(KeyEvent.VK_ENTER)) && this.selectionCooldown.checkFinished()) {
 			this.isRunning = false;
 		}
 		// 점수 기록 관리 - R버튼 누를시 reset

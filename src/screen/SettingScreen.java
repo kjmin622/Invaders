@@ -66,7 +66,7 @@ public class SettingScreen extends Screen {
 
         draw();
 
-        if ((inputManager.isKeyDown(KeyEvent.VK_SPACE) || (inputManager.isKeyDown(KeyEvent.VK_ESCAPE))) && this.inputDelay.checkFinished()) {
+        if ((inputManager.isKeyDown(KeyEvent.VK_SPACE) || inputManager.isKeyDown(KeyEvent.VK_ENTER)|| (inputManager.isKeyDown(KeyEvent.VK_ESCAPE))) && this.inputDelay.checkFinished()) {
             this.isRunning = false;
         }
         if ((inputManager.isKeyDown(KeyEvent.VK_UP) || inputManager.isKeyDown(KeyEvent.VK_W)) && this.selectionCooldown.checkFinished()) {

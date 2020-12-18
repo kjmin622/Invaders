@@ -9,6 +9,10 @@ Best Practice에는 개발 프로세스, 테스팅, 이슈 관리, 품질 관리
 - [목차](#목차)
 - [팀원 소개](#팀원-소개)
 
+- [릴리즈 주소](#릴리즈-주소)
+
+- [실행법](#실행법)
+
 - [소프트웨어 개발](#소프트웨어-개발)
     - [개발 프로세스](#개발-프로세스)
     - [테스팅](#테스팅)
@@ -38,6 +42,15 @@ Best Practice에는 개발 프로세스, 테스팅, 이슈 관리, 품질 관리
 > 이성민_2019000773_[Lee-SungMin](https://lee-sungmin.github.io)<br>
 > 이현지_2019052251_[huskycat1202](https://huskycat1202.github.io)
 <br>
+
+# 릴리즈 주소
+>https://github.com/kjmin622/Invaders/releases
+
+# 실행법
+invaders.jar 실행<br>
+안 될 경우 콘솔창에서 경로로 이동한 후<br>
+```java -jar 파일명.jar```<br>
+명령어 입력
 
 # 소프트웨어 개발
 ## 개발 프로세스
@@ -93,12 +106,12 @@ IntelliJ에서 PMD Plug-in을 설치해 사용한다.
 
 branch 종류
 
->master : release가 일어나는 branch<br>
-develop : 다음 버전을 개발하는 branch<br>
-feature : 특정기능을 개발하는  branch<br>
-release : 이번 버전을 준비하는 branch<br>
-hotfix : master에서 발생한 버그를 수정하는 branch<br>
-bugfix : release branch에서 발생한 버그를 수정하는 branch
+>- master : release가 일어나는 branch<br>
+>- develop : 다음 버전을 개발하는 branch<br>
+>- feature : 특정기능을 개발하는  branch<br>
+>- release : 이번 버전을 준비하는 branch<br>
+>- hotfix : master에서 발생한 버그를 수정하는 branch<br>
+>- bugfix : release branch에서 발생한 버그를 수정하는 branch
  
 <!-- Git -->
 
@@ -114,14 +127,14 @@ bugfix : release branch에서 발생한 버그를 수정하는 branch
 <br>
 
 생산성 향상을 위한 핵심 기능
-> * 스마트 검색 기능<br>
-> * 메시지 / 파일 히스토리로 업무 파악<br>
-> * 즐겨찾기 기능<br>
-> * 잔디 드라이브 기능으로 파일관리<br>
-> * 토픽, 멘션, 파일 댓글, 파일 공유, 외부 게스트 초대 등 협업기능<br>
-> * 관리자의 접근 권한 조정 기능<br>
-> * 기존 타 서비스 연동<br>
-> * PC, 모바일 기기에 최적화
+> - 스마트 검색 기능<br>
+> - 메시지 / 파일 히스토리로 업무 파악<br>
+> - 즐겨찾기 기능<br>
+> - 잔디 드라이브 기능으로 파일관리<br>
+> - 토픽, 멘션, 파일 댓글, 파일 공유, 외부 게스트 초대 등 협업기능<br>
+> - 관리자의 접근 권한 조정 기능<br>
+> - 기존 타 서비스 연동<br>
+> - PC, 모바일 기기에 최적화
 <!-- Jandi --> 
  
 ## 개발 도구
